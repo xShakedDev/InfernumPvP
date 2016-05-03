@@ -19,7 +19,7 @@ public class Test_Command implements CommandExecutor {
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (sender instanceof Player) {
 			if (label.equalsIgnoreCase("test")) {
-				sender.sendMessage(m.ADMINISTRATION + ChatBuilder.build("TEST Command :)"));
+				sender.sendMessage(m.ADMINISTRATION + ChatBuilder.build("TEST Command :) "));
 				AnvilGUI gui = new AnvilGUI((Player) sender);
 				AnvilClickEventHandler e = new AnvilClickEventHandler() {
 					@Override
