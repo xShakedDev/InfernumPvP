@@ -18,6 +18,8 @@ import com.sk89q.worldedit.bukkit.selections.Selection;
 
 import net.apartium.servers.infernumpvp.InfernumPvP;
 import net.apartium.servers.infernumpvp.PlayerData;
+import net.apartium.servers.infernumpvp.mainarena.Kit;
+import net.apartium.servers.infernumpvp.mainarena.kits.CheaterMan;
 import net.apartium.servers.infernumpvp.regions.InventoryFlags;
 import net.apartium.servers.infernumpvp.regions.Region;
 import net.apartium.servers.infernumpvp.regions.RegionListener;
@@ -88,6 +90,7 @@ public class Region_Command implements CommandExecutor {
 					}
 				}
 				if(args[0].equals("test")){
+					Kit.give(new CheaterMan(), Bukkit.getPlayer("Voigon"));
 				}
 				if (args[0].equalsIgnoreCase("info")) {
 					Region rgm = Region.createNew(args[1]);

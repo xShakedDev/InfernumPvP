@@ -1,7 +1,6 @@
 package net.apartium.servers.infernumpvp.mainarena.kits;
 
 import org.bukkit.Material;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -14,30 +13,22 @@ public class SwitcherKit extends Kit {
 
 	@Override
 	public ItemStack helmet() {
-		ItemStack helmet = new ItemStack(Material.LEATHER_LEGGINGS);
-		helmet.addUnsafeEnchantment(Enchantment.PROTECTION_FIRE, 20);
-		return helmet;
+		return new ItemStack(Material.LEATHER_HELMET);
 	}
 
 	@Override
 	public ItemStack chestplate() {
-		ItemStack chest = new ItemStack(Material.LEATHER_LEGGINGS);
-		chest.addUnsafeEnchantment(Enchantment.PROTECTION_FIRE, 20);
-		return chest;
+		return new ItemStack(Material.LEATHER_CHESTPLATE);
 	}
 
 	@Override
 	public ItemStack leggings() {
-		ItemStack leg = new ItemStack(Material.LEATHER_LEGGINGS);
-		leg.addUnsafeEnchantment(Enchantment.PROTECTION_FIRE, 20);
-		return leg;
+		return new ItemStack(Material.LEATHER_LEGGINGS);
 	}
 
 	@Override
 	public ItemStack boots() {
-		ItemStack boot = new ItemStack(Material.LEATHER_LEGGINGS);
-		boot.addUnsafeEnchantment(Enchantment.PROTECTION_FIRE, 20);
-		return boot;
+		return new ItemStack(Material.LEATHER_BOOTS);
 	}
 
 	@Override

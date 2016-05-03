@@ -1,6 +1,7 @@
 package net.apartium.servers.infernumpvp.mainarena.kits;
 
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -13,22 +14,30 @@ public class PyroKit extends Kit {
 
 	@Override
 	public ItemStack helmet() {
-		return new ItemStack(Material.LEATHER_HELMET);
+		ItemStack helmet = new ItemStack(Material.LEATHER_HELMET);
+		helmet.addUnsafeEnchantment(Enchantment.PROTECTION_FIRE, 20);
+		return helmet;
 	}
 
 	@Override
 	public ItemStack chestplate() {
-		return new ItemStack(Material.LEATHER_CHESTPLATE);
+		ItemStack chest = new ItemStack(Material.LEATHER_CHESTPLATE);
+		chest.addUnsafeEnchantment(Enchantment.PROTECTION_FIRE, 20);
+		return chest;
 	}
 
 	@Override
 	public ItemStack leggings() {
-		return new ItemStack(Material.LEATHER_LEGGINGS);
+		ItemStack leg = new ItemStack(Material.LEATHER_LEGGINGS);
+		leg.addUnsafeEnchantment(Enchantment.PROTECTION_FIRE, 20);
+		return leg;
 	}
 
 	@Override
 	public ItemStack boots() {
-		return new ItemStack(Material.LEATHER_BOOTS);
+		ItemStack boot = new ItemStack(Material.LEATHER_BOOTS);
+		boot.addUnsafeEnchantment(Enchantment.PROTECTION_FIRE, 20);
+		return boot;
 	}
 
 	@Override

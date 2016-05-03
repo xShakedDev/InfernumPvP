@@ -35,6 +35,7 @@ import net.apartium.servers.infernumpvp.listeners.player.ChatEvent;
 import net.apartium.servers.infernumpvp.listeners.player.DeathEvent;
 import net.apartium.servers.infernumpvp.listeners.player.JoinEvent;
 import net.apartium.servers.infernumpvp.listeners.player.PingEvent;
+import net.apartium.servers.infernumpvp.mainarena.kits.CheaterMan;
 import net.apartium.servers.infernumpvp.regions.InventoryFlags;
 import net.apartium.servers.infernumpvp.regions.RegionListener;
 import net.apartium.servers.infernumpvp.utils.IOUtil;
@@ -121,6 +122,7 @@ public class InfernumPvP extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new CharacterGUI(), this);
 		getServer().getPluginManager().registerEvents(new ChatEvent(), this);
 		getServer().getPluginManager().registerEvents(new DeathEvent(), this);
+		getServer().getPluginManager().registerEvents(new CheaterMan(), this);
 
 		getServer().getPluginCommand("coins").setExecutor(new Coins_Command());
 		getServer().getPluginCommand("infernum").setExecutor(new Infernum_Command());

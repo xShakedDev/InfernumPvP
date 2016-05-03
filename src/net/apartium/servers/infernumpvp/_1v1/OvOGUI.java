@@ -19,10 +19,13 @@ public class OvOGUI implements Listener {
 			Player t = (Player) e.getRightClicked();
 			if (p.getItemInHand().getType() == Material.BLAZE_ROD) {
 				if (ArenasManager.getArenas().getList().isEmpty() || ArenasManager.getArenas().getList() == null) {
-					p.sendMessage(m.OVO + ChatBuilder.build("There is no arenas you can join."));
-				return;
+					{
+						p.sendMessage(m.OVO + ChatBuilder.build("There is no arenas you can join."));
+						return;
+
+					}
 				}
-				
+
 			}
 		}
 	}

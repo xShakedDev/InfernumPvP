@@ -18,6 +18,6 @@ public class ChatEvent implements Listener {
 	public void onChat(PlayerChatEvent e) {
 		PlayerData pd = new PlayerData(e.getPlayer());
 		e.setCancelled(true);
-		Bukkit.broadcastMessage(m.ARENA + ChatBuilder.build("", pd.getNick(), e.getMessage()));
+		Bukkit.broadcastMessage(ChatBuilder.build("", pd.getNick() + "  >", e.getMessage()));
 	}
 }
