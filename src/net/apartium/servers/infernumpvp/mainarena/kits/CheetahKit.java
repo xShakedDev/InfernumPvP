@@ -3,17 +3,18 @@ package net.apartium.servers.infernumpvp.mainarena.kits;
 import java.util.ArrayList;
 
 import org.bukkit.Material;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import net.apartium.servers.infernumpvp.mainarena.Kit;
+import net.apartium.servers.infernumpvp.utils.ItemUtil;
 
-public class MarksmanKit extends Kit {
+public class CheetahKit extends Kit {
 
-	public MarksmanKit() {
-		super("Marksman", 0);
+	public CheetahKit() {
+		super("Cheetah", 125);
 
 	}
 
@@ -40,18 +41,24 @@ public class MarksmanKit extends Kit {
 	@Override
 	public void onFill(Player p) {
 		p.getInventory().addItem(new ItemStack(Material.WOOD_SWORD));
-		ItemStack bow = new ItemStack(Material.BOW);
-		bow.addUnsafeEnchantment(Enchantment.ARROW_INFINITE, 1);
-		p.getInventory().addItem(bow);
-		p.getInventory().setItem(34, new ItemStack(Material.ARROW));
 	}
 
 	@Override
 	public Material icon() {
-		return Material.BOW;
+		try {
+			return ItemUtil.getSkullFromURL(
+					"http://textures.minecraft.net/texture/845eae6fcd84bb42237f076ef3a514695f146174085362b77fead4506864e8",
+					"Cheetah").getType();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
+
 	@Override
 	public ArrayList<PotionEffect> pots() {
-		return null;
+		ArrayList<PotionEffect> pot = new ArrayList<>();
+		pots().add(new PotionEffect(PotionEffectType.SPEED, 9999999, 1));
+		return pot;
 	}
 }

@@ -1,15 +1,18 @@
 package net.apartium.servers.infernumpvp.mainarena.kits;
 
+import java.util.ArrayList;
+
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
 
 import net.apartium.servers.infernumpvp.mainarena.Kit;
 
 public class TerroristKit extends Kit {
 
 	public TerroristKit() {
-		super("Terrorist",200);
+		super("Terrorist", 200);
 
 	}
 
@@ -41,7 +44,11 @@ public class TerroristKit extends Kit {
 
 	@Override
 	public Material icon() {
-		// TODO Auto-generated method stub
 		return Material.EGG;
+	}
+
+	@Override
+	public ArrayList<PotionEffect> pots() {
+		return null;
 	}
 }

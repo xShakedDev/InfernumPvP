@@ -1,8 +1,11 @@
 package net.apartium.servers.infernumpvp.mainarena.kits;
 
+import java.util.ArrayList;
+
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
 
 import net.apartium.servers.infernumpvp.mainarena.Kit;
 
@@ -39,5 +42,9 @@ public class HunterKit extends Kit {
 	@Override
 	public Material icon() {
 		return Material.STONE_SWORD;
+	}
+	@Override
+	public ArrayList<PotionEffect> pots() {
+		return null;
 	}
 }

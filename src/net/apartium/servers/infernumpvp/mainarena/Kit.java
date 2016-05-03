@@ -1,14 +1,17 @@
 package net.apartium.servers.infernumpvp.mainarena;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
 
 import net.apartium.servers.infernumpvp.InfernumPvP;
 import net.apartium.servers.infernumpvp.PlayerData;
+import net.apartium.servers.infernumpvp.mainarena.kits.CheetahKit;
 import net.apartium.servers.infernumpvp.mainarena.kits.FisherManKit;
 import net.apartium.servers.infernumpvp.mainarena.kits.HunterKit;
 import net.apartium.servers.infernumpvp.mainarena.kits.MarksmanKit;
@@ -19,9 +22,15 @@ import net.apartium.servers.infernumpvp.utils.ChatBuilder;
 
 public abstract class Kit {
 
-	public static final Kit HUNTER = new HunterKit(), FISHER = new FisherManKit(), SWITCHER = new SwitcherKit(),
-			MARKSMAN = new MarksmanKit(), TERRORIST = new TerroristKit(), PYRO = new PyroKit();
-	public static List<Kit> kits = Arrays.asList(HUNTER, MARKSMAN, TERRORIST, FISHER, SWITCHER, PYRO);
+	public static final Kit 
+			HUNTER = new HunterKit(),
+			FISHER = new FisherManKit(),
+			SWITCHER = new SwitcherKit(),
+			MARKSMAN = new MarksmanKit(),
+			TERRORIST = new TerroristKit(),
+			PYRO = new PyroKit(),
+			CHEETAH = new CheetahKit();
+	public static List<Kit> kits = Arrays.asList(HUNTER, MARKSMAN, TERRORIST, FISHER, SWITCHER, PYRO, CHEETAH);
 	private static final InfernumPvP m = InfernumPvP.getInstance();
 
 	private String name;
@@ -43,6 +52,8 @@ public abstract class Kit {
 
 	public abstract Material icon();
 
+	public abstract ArrayList<PotionEffect> pots();
+
 	public void onFill(Player p) {
 	}
 
@@ -59,6 +70,9 @@ public abstract class Kit {
 		PlayerData pp = new PlayerData(p);
 		if (!pp.hasKit(k))
 			return;
+		for (PotionEffect pots : k.pots()) {
+			p.addPotionEffect(pots);
+		}
 		p.getInventory().clear();
 		p.getInventory().getItemInHand().setType(Material.AIR);
 		p.getActivePotionEffects().clear();

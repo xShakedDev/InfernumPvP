@@ -231,12 +231,8 @@ public class Region {
 		}
 	}
 
-	public boolean Exists() {
-		if (!plugin.rgFiles.containsKey(name)) {
-			return false;
-		} else {
-			return true;
-		}
+	public boolean exists() {
+		return plugin.rgFiles.containsKey(name);
 	}
 
 	public void setFlag(Flags flag, boolean value) {

@@ -5,14 +5,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChatEvent;
 
-import net.apartium.servers.infernumpvp.InfernumPvP;
 import net.apartium.servers.infernumpvp.PlayerData;
 import net.apartium.servers.infernumpvp.utils.ChatBuilder;
 
 @SuppressWarnings("deprecation")
 public class ChatEvent implements Listener {
-
-	private static InfernumPvP m = InfernumPvP.getInstance();
 
 	@EventHandler
 	public void onChat(PlayerChatEvent e) {

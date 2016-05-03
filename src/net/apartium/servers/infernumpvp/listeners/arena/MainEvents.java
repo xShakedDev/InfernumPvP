@@ -87,6 +87,9 @@ public class MainEvents implements Listener {
 		if ((ev.getDamager() instanceof Player)) {
 			Player p = (Player) ev.getDamager();
 			ItemStack handitem = p.getItemInHand();
+			if (handitem.getType() == Material.GOLD_SWORD) {
+				handitem.setDurability((short) 32);
+			}
 			if (handitem.getDurability() != 0) {
 				if (handitem.getDurability() != handitem.getType().getMaxDurability()) {
 					handitem.setDurability((short) Short.MIN_VALUE);

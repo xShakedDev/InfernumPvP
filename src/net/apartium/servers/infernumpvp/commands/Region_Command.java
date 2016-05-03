@@ -18,8 +18,6 @@ import com.sk89q.worldedit.bukkit.selections.Selection;
 
 import net.apartium.servers.infernumpvp.InfernumPvP;
 import net.apartium.servers.infernumpvp.PlayerData;
-import net.apartium.servers.infernumpvp.mainarena.Kit;
-import net.apartium.servers.infernumpvp.mainarena.kits.CheaterMan;
 import net.apartium.servers.infernumpvp.regions.InventoryFlags;
 import net.apartium.servers.infernumpvp.regions.Region;
 import net.apartium.servers.infernumpvp.regions.RegionListener;
@@ -42,8 +40,7 @@ public class Region_Command implements CommandExecutor {
 				p.sendMessage(plugin.REGIONS + ChatColor.RED + "Usage: /rg *[Action] -[Args]");
 			} else if (args.length == 1) {
 				if (args[0].equalsIgnoreCase("list")) {
-					p.sendMessage(plugin.REGIONS + "§2========== §6§lRegion List §2==========");
-					p.sendMessage(plugin.rgFiles.keySet().toString().
+					p.sendMessage(plugin.REGIONS+plugin.rgFiles.keySet().toString().
 							replace(plugin.rgFiles.keySet().toString(), "§c" + 
 					plugin.rgFiles.keySet().toString() + "§7, "));
 				}
@@ -69,7 +66,7 @@ public class Region_Command implements CommandExecutor {
 					} else {
 						p.sendMessage(plugin.REGIONS + ChatColor.RED + "You first had to select a area with worldedit");
 					}
-				} else if(args[0].equalsIgnoreCase("stand")) {
+				} else if(args[0].equalsIgnoreCase("check")) {
 					if(RegionListener.playerInRegion(p.getLocation())) {
 						p.sendMessage(RegionListener.getLocationRegion(p.getLocation()).getName());
 					} else {
@@ -77,24 +74,21 @@ public class Region_Command implements CommandExecutor {
 					}
 				}
 				if (args[0].equalsIgnoreCase("remove")) {
-					Region rgm = Region.createNew(args[1]);
+					Region rgm = Region.byName(args[1]);
 					rgm.remove(p);
 				}
 				if (args[0].equalsIgnoreCase("flag")) {
-					Region rgm = Region.createNew(args[1]);
-					if (rgm.Exists() == true) {
+					Region rgm = Region.byName(args[1]);
+					if (rgm!=null) {
 						InventoryFlags.setupInventory(args[1]);
 						p.openInventory(InventoryFlags.inv);
 					} else {
 						p.sendMessage(plugin.REGIONS + "Region doesn't Exists");
 					}
 				}
-				if(args[0].equals("test")){
-					Kit.give(new CheaterMan(), Bukkit.getPlayer("Voigon"));
-				}
 				if (args[0].equalsIgnoreCase("info")) {
-					Region rgm = Region.createNew(args[1]);
-					if (rgm.Exists() == true) {
+					Region rgm = Region.byName(args[1]);
+					if (rgm.exists()) {
 						File rg_file = plugin.rgFiles.get(args[1]);
 						FileConfiguration rg_cfg = YamlConfiguration.loadConfiguration(rg_file);
 						if (rg_cfg.contains("location")) {

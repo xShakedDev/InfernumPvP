@@ -35,7 +35,6 @@ import net.apartium.servers.infernumpvp.listeners.player.ChatEvent;
 import net.apartium.servers.infernumpvp.listeners.player.DeathEvent;
 import net.apartium.servers.infernumpvp.listeners.player.JoinEvent;
 import net.apartium.servers.infernumpvp.listeners.player.PingEvent;
-import net.apartium.servers.infernumpvp.mainarena.kits.CheaterMan;
 import net.apartium.servers.infernumpvp.regions.InventoryFlags;
 import net.apartium.servers.infernumpvp.regions.RegionListener;
 import net.apartium.servers.infernumpvp.utils.IOUtil;
@@ -50,7 +49,6 @@ public class InfernumPvP extends JavaPlugin {
 	static File a;
 	public FileConfiguration ac;
 	public World spawnWorld;
-
 	public String 
 			PREFIX = "§b§l",
 			SUFFIX = "  §7> ",
@@ -64,8 +62,9 @@ public class InfernumPvP extends JavaPlugin {
 			OVO = PREFIX + "1VS1" + SUFFIX,
 			OFFLINE_PLAYER = SERVER + "Offline player";
 
-	public File rgFolder = IOUtil.handleDir(getDataFolder(), "folder"),
-			rgGlobal = IOUtil.handleYML(rgFolder, "*:global.yml").getKey(),
+	public File 
+			rgFolder = IOUtil.handleDir(getDataFolder(), "folder"),
+			rgGlobal = IOUtil.handleYML(rgFolder, "global.yml").getKey(),
 			multiWorld = IOUtil.handleYML(getDataFolder(), "multiworld.yml").getKey();
 
 	public Permission permVault;
@@ -103,6 +102,7 @@ public class InfernumPvP extends JavaPlugin {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
 		for (File f : rgFolder.listFiles()) 
 			rgFiles.put(f.getName().replace(".yml", ""), f);
 		
@@ -122,7 +122,6 @@ public class InfernumPvP extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new CharacterGUI(), this);
 		getServer().getPluginManager().registerEvents(new ChatEvent(), this);
 		getServer().getPluginManager().registerEvents(new DeathEvent(), this);
-		getServer().getPluginManager().registerEvents(new CheaterMan(), this);
 
 		getServer().getPluginCommand("coins").setExecutor(new Coins_Command());
 		getServer().getPluginCommand("infernum").setExecutor(new Infernum_Command());
