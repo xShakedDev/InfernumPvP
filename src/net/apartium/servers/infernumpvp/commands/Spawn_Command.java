@@ -4,11 +4,14 @@ import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.SkullType;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.potion.PotionEffect;
 
 import net.apartium.servers.infernumpvp.InfernumPvP;
 import net.apartium.servers.infernumpvp.utils.ItemUtil;
@@ -23,18 +26,22 @@ public class Spawn_Command implements CommandExecutor {
 
 		ItemStack select = ItemUtil.easy(Material.CHEST, ChatColor.GRAY + "Kits");
 		ItemStack shop = ItemUtil.easy(Material.ENDER_CHEST, ChatColor.GRAY + "Kit Shop");
-		ItemStack character = ItemUtil.skull(ChatColor.RESET + p.getName(), ChatColor.RESET + p.getName());
 
 		p.getInventory().clear();
-		p.getActivePotionEffects().clear();
-
+		for (PotionEffect pe : p.getActivePotionEffects())
+			p.removePotionEffect(pe.getType());
 		p.setHealth(20);
 		p.setFoodLevel(20);
 		p.setGameMode(GameMode.SURVIVAL);
 
 		p.getInventory().setItem(0, select);
 		p.getInventory().setItem(2, shop);
-		p.getInventory().setItem(8, character);
+		ItemStack is = new ItemStack(Material.SKULL_ITEM, 1, (short) SkullType.PLAYER.ordinal());
+		SkullMeta im = (SkullMeta) is.getItemMeta();
+		im.setOwner(p.getName());
+		is.setItemMeta(im);
+		p.getInventory().addItem(ItemUtil.easy(Material.BLAZE_ROD, "§61V1 Stick"));
+		p.getInventory().setItem(8, is);
 
 		return false;
 	}

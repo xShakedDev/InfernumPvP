@@ -7,17 +7,20 @@ import java.util.List;
 import java.util.Map;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+
+import com.sk89q.worldedit.bukkit.selections.Selection;
 
 import net.apartium.servers.infernumpvp.InfernumPvP;
 import net.apartium.servers.infernumpvp.utils.IOUtil;
 
 public class Region {
 	private static InfernumPvP plugin=InfernumPvP.getInstance();
-	private static Map<String,Region> regions = new HashMap<>();
+	protected static Map<String,Region> regions = new HashMap<>();
 	
 	public static Region byName(String name) {
 		return regions.get(name);
@@ -25,6 +28,15 @@ public class Region {
 	public static Region createNew(String name) {
 		Region ret = new Region(name);
 		regions.put(ret.getName(), ret);
+		ret.setup();
+		return ret;
+	}
+	public static Region createNew(Player p, String name, Selection s) {
+		Region ret = new Region(name);
+		regions.put(ret.getName(), ret);
+		ret.create(p, s.getWorld(), s.getMinimumPoint().getX(), s.getMinimumPoint().getZ()
+				, s.getMaximumPoint().getX(), s.getMaximumPoint().getZ());
+		ret.setup();
 		return ret;
 	}
 
@@ -32,16 +44,21 @@ public class Region {
 	private FileConfiguration fc;
 	private String name;
 	
+	private Location maxLoc;
+	private Location minLoc;
+	private World w;
+		
 	private Region(String name) {
 		this.name = name;
 		if(plugin.rgFiles.containsKey(name))
 			this.f=plugin.rgFiles.get(name);
-		else
+		else 
 			this.f=IOUtil.handleYML(plugin.rgFolder, name+".yml").getKey();
-		
+	
 		this.fc=YamlConfiguration.loadConfiguration(f);
+		
 	}
-
+	
 	public enum Flags {
 
 		BUILD, DESTROY, BLOCK_CMD, JOINCOMBAT, PVP, ENTRY, ALLOW_SOUPDROP, ALLOW_SOUPSSIGN, ITEMDROP, ITEMPICKUP, DAMAGE, MOB_SPAWNING, EXPLODE, HUNGER
@@ -60,11 +77,39 @@ public class Region {
 		COMMAND_ONENTER, COMMAND_ONLEAVE, BLOCKED_CMD
 
 	}
-
+		
+	public boolean isGlobal() {
+		return maxLoc==null&minLoc==null;
+	}
+	private void setup() {
+		Bukkit.broadcastMessage(fc.getString("location.world"));
+		this.maxLoc=new Location(Bukkit.getWorld(fc.getString("location.world")),
+				fc.getDouble("location.toX"), 0, fc.getDouble("location.toZ"));
+		this.minLoc=new Location(Bukkit.getWorld(fc.getString("location.world")),
+				fc.getDouble("location.fromX"), 0, fc.getDouble("location.fromZ"));
+		
+		this.w=Bukkit.getWorld(fc.getString("location.world"));
+	}
+	//tamid ani aa
+	public World getWorld() {
+		return w;
+	}
+	public File getFile() {
+		return f;
+	} 
+	
+	public FileConfiguration getConfig() {
+		return fc;
+	}
+	
+	public Location getMaxLocation() {
+		return maxLoc;
+	}
+	public Location getMinLocation() {
+		return minLoc;
+	}
+	
 	public boolean getFlag(Flags flag) {
-		File f = plugin.rgFiles.get(name);
-		FileConfiguration fc = YamlConfiguration.loadConfiguration(f);
-
 		if (flag == Flags.BUILD && fc.getBoolean("flags.build")) {
 			return true;
 		} else if (flag == Flags.DESTROY && fc.getBoolean("flags.destroy")) {
@@ -97,9 +142,9 @@ public class Region {
 			return false;
 		}
 	}
-	public void setupGlobal() {
+	public static void setupGlobal() {
 		FileConfiguration c = YamlConfiguration.loadConfiguration(plugin.rgGlobal);
-		c.set("name", name);
+		c.set("name", "global");
 		c.set("creator", "plugin");
 
 		c.set("flags.build", false);
@@ -189,8 +234,6 @@ public class Region {
 
 	public void create(Player p, World w, double fromx, double tox, double fromz, double toz) {
 		if (!plugin.rgFiles.containsKey(name)) {
-			File f = new File(plugin.getDataFolder() + "/regions/" + name + ".yml");
-			FileConfiguration fc = YamlConfiguration.loadConfiguration(f);
 			plugin.rgFiles.put(name, f);
 			fc.set("name", name);
 			fc.set("creator", p.getName());

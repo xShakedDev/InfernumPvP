@@ -1,6 +1,5 @@
 package net.apartium.servers.infernumpvp.mainarena;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -22,13 +21,8 @@ import net.apartium.servers.infernumpvp.utils.ChatBuilder;
 
 public abstract class Kit {
 
-	public static final Kit 
-			HUNTER = new HunterKit(),
-			FISHER = new FisherManKit(),
-			SWITCHER = new SwitcherKit(),
-			MARKSMAN = new MarksmanKit(),
-			TERRORIST = new TerroristKit(),
-			PYRO = new PyroKit(),
+	public static final Kit HUNTER = new HunterKit(), FISHER = new FisherManKit(), SWITCHER = new SwitcherKit(),
+			MARKSMAN = new MarksmanKit(), TERRORIST = new TerroristKit(), PYRO = new PyroKit(),
 			CHEETAH = new CheetahKit();
 	public static List<Kit> kits = Arrays.asList(HUNTER, MARKSMAN, TERRORIST, FISHER, SWITCHER, PYRO, CHEETAH);
 	private static final InfernumPvP m = InfernumPvP.getInstance();
@@ -50,9 +44,7 @@ public abstract class Kit {
 
 	public abstract ItemStack boots();
 
-	public abstract Material icon();
-
-	public abstract ArrayList<PotionEffect> pots();
+	public abstract ItemStack icon();
 
 	public void onFill(Player p) {
 	}
@@ -66,16 +58,15 @@ public abstract class Kit {
 		return price;
 	}
 
+	@SuppressWarnings("deprecation")
 	public static void give(Kit k, Player p) {
 		PlayerData pp = new PlayerData(p);
 		if (!pp.hasKit(k))
 			return;
-		for (PotionEffect pots : k.pots()) {
-			p.addPotionEffect(pots);
-		}
 		p.getInventory().clear();
 		p.getInventory().getItemInHand().setType(Material.AIR);
-		p.getActivePotionEffects().clear();
+		for (PotionEffect pe : p.getActivePotionEffects())
+			p.removePotionEffect(pe.getType());
 		p.sendMessage(m.ARENA + ChatBuilder.build("You got kit", k.name()));
 		p.getInventory().setArmorContents(new ItemStack[] { k.boots(), k.leggings(), k.chestplate(), k.helmet() });
 		k.onFill(p);
@@ -99,7 +90,7 @@ public abstract class Kit {
 
 	public static Kit byItem(Material m) {
 		for (Kit k : kits)
-			if (k.icon() == m)
+			if (k.icon().getType() == m)
 				return k;
 		return null;
 	}

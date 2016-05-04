@@ -56,6 +56,7 @@ public class KitGUI {
 	}
 
 	public static Listener events = new Listener() {
+		@SuppressWarnings("deprecation")
 		@EventHandler
 		public void onClickShopItem(PlayerInteractEvent e) {
 			if (e.getPlayer().getItemInHand() == null)

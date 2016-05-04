@@ -2,13 +2,14 @@ package net.apartium.servers.infernumpvp.test;
 
 import java.util.Arrays;
 
-import net.minecraft.server.v1_8_R3.NBTTagCompound;
-import net.minecraft.server.v1_8_R3.NBTTagList;
 
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_9_R1.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+
+import net.minecraft.server.v1_9_R1.NBTTagCompound;
+import net.minecraft.server.v1_9_R1.NBTTagList;
 
 @SuppressWarnings("deprecation")
 public class ItemManagement {
@@ -62,7 +63,7 @@ public class ItemManagement {
 	}
 	
     public static ItemStack addGlow(ItemStack item) {
-        net.minecraft.server.v1_8_R3.ItemStack nmsStack = CraftItemStack.asNMSCopy(item);
+        net.minecraft.server.v1_9_R1.ItemStack nmsStack = CraftItemStack.asNMSCopy(item);
         NBTTagCompound tag = null;
         if (!nmsStack.hasTag()) {
             tag = new NBTTagCompound();

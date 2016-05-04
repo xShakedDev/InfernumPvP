@@ -1,11 +1,9 @@
-package net.apartium.servers.infernumpvp.commands;
+	package net.apartium.servers.infernumpvp.commands;
 
 import java.io.File;
 
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -20,14 +18,13 @@ import net.apartium.servers.infernumpvp.InfernumPvP;
 import net.apartium.servers.infernumpvp.PlayerData;
 import net.apartium.servers.infernumpvp.regions.InventoryFlags;
 import net.apartium.servers.infernumpvp.regions.Region;
-import net.apartium.servers.infernumpvp.regions.RegionListener;
 import net.apartium.servers.infernumpvp.regions.Region.Flag_List;
+import net.apartium.servers.infernumpvp.regions.RegionListener;
 
 public class Region_Command implements CommandExecutor {
 	private InfernumPvP plugin=InfernumPvP.getInstance();
 
-	public Region_Command() {
-	}
+	public Region_Command() {}
 
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		Player p = (Player) sender;
@@ -52,20 +49,11 @@ public class Region_Command implements CommandExecutor {
 
 					Selection selection = worldedit.getSelection(p);
 
-					if (selection != null) {
-						Region rgm = Region.createNew(args[1]);
-						World world = (World) selection.getWorld();
-						org.bukkit.Location min = selection.getMaximumPoint();
-						org.bukkit.Location max = selection.getMinimumPoint();
-						rgm.create(p
-								, world
-								, min.getX()
-								, max.getX()
-								, min.getZ()
-								, max.getZ());
-					} else {
+					if (selection != null) 
+						Region.createNew(p,args[1],selection);
+					else 
 						p.sendMessage(plugin.REGIONS + ChatColor.RED + "You first had to select a area with worldedit");
-					}
+					
 				} else if(args[0].equalsIgnoreCase("check")) {
 					if(RegionListener.playerInRegion(p.getLocation())) {
 						p.sendMessage(RegionListener.getLocationRegion(p.getLocation()).getName());

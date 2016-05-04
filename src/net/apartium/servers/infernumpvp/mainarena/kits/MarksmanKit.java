@@ -1,12 +1,9 @@
 package net.apartium.servers.infernumpvp.mainarena.kits;
 
-import java.util.ArrayList;
-
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffect;
 
 import net.apartium.servers.infernumpvp.mainarena.Kit;
 
@@ -47,11 +44,7 @@ public class MarksmanKit extends Kit {
 	}
 
 	@Override
-	public Material icon() {
-		return Material.BOW;
-	}
-	@Override
-	public ArrayList<PotionEffect> pots() {
-		return null;
+	public ItemStack icon() {
+		return new ItemStack(Material.BOW);
 	}
 }

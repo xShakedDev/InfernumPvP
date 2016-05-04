@@ -11,6 +11,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import net.apartium.servers.infernumpvp.InfernumPvP;
 
 public class PyroEvents implements Listener {
+	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void onFire(PlayerInteractEvent e) {
 		if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {

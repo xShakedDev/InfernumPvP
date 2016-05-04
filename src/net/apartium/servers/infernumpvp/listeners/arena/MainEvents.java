@@ -1,5 +1,6 @@
 package net.apartium.servers.infernumpvp.listeners.arena;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -13,9 +14,16 @@ import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 
+import net.apartium.servers.infernumpvp.InfernumPvP;
+
+@SuppressWarnings("deprecation")
 public class MainEvents implements Listener {
+	private static InfernumPvP m = InfernumPvP.getInstance();
+
 	@EventHandler
 	public void onPlayerInteractEvent(PlayerInteractEvent event) {
 		Player player = event.getPlayer();
@@ -37,6 +45,17 @@ public class MainEvents implements Listener {
 	}
 
 	@EventHandler
+	public void onRespawn(PlayerRespawnEvent e) {
+		new BukkitRunnable() {
+
+			@Override
+			public void run() {
+				Bukkit.dispatchCommand(e.getPlayer(), "spawn");
+			}
+		}.runTaskLater(m, 1);
+	}
+
+	@EventHandler
 	public void noFood(FoodLevelChangeEvent event) {
 		event.setCancelled(true);
 		((Player) event.getEntity()).setFoodLevel(20);
@@ -52,7 +71,6 @@ public class MainEvents implements Listener {
 		event.setCancelled(true);
 	}
 
-	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onBlockSpread(BlockSpreadEvent event) {
 		if (event.getBlock().getTypeId() != 3) {
@@ -67,6 +85,7 @@ public class MainEvents implements Listener {
 			if (handitem.getDurability() != 0) {
 				if (handitem.getDurability() != handitem.getType().getMaxDurability()) {
 					handitem.setDurability((short) Short.MIN_VALUE);
+					e.getPlayer().updateInventory();
 				}
 			}
 		}
@@ -80,7 +99,10 @@ public class MainEvents implements Listener {
 			ItemStack[] armor = p.getInventory().getArmorContents();
 			for (ItemStack armo : armor) {
 				if (armo != null) {
-					armo.setDurability((short) -armo.getType().getMaxDurability());
+					if (armo.getType() != Material.SKULL) {
+						armo.setDurability((short) -armo.getType().getMaxDurability());
+						p.updateInventory();
+					}
 				}
 			}
 		}
@@ -88,11 +110,13 @@ public class MainEvents implements Listener {
 			Player p = (Player) ev.getDamager();
 			ItemStack handitem = p.getItemInHand();
 			if (handitem.getType() == Material.GOLD_SWORD) {
-				handitem.setDurability((short) 32);
+				handitem.setDurability((short) 30);
+				p.updateInventory();
 			}
 			if (handitem.getDurability() != 0) {
 				if (handitem.getDurability() != handitem.getType().getMaxDurability()) {
 					handitem.setDurability((short) Short.MIN_VALUE);
+					p.updateInventory();
 				}
 			}
 		}
@@ -105,6 +129,7 @@ public class MainEvents implements Listener {
 			ItemStack handitem = p.getItemInHand();
 			if (handitem.getDurability() != handitem.getType().getMaxDurability()) {
 				handitem.setDurability((short) Short.MIN_VALUE);
+				p.updateInventory();
 			}
 		}
 	}

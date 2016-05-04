@@ -28,9 +28,16 @@ public class Command1v1 implements CommandExecutor {
 				if (args.length >= 1) {
 					if (args[0].equalsIgnoreCase("join")) {
 						Player tp = Bukkit.getPlayer(args[1]);
-						if(OvOGUI.requests.containsKey(tp.getUniqueId())&&
-								OvOGUI.requests.get(tp.getUniqueId()).equals(p.getUniqueId())) {
+						if (OvOGUI.requests.containsKey(tp.getUniqueId())
+								&& !OvOGUI.ingame.containsKey(tp.getUniqueId())
+								&& OvOGUI.requests.get(tp.getUniqueId()).equals(p.getUniqueId())) {
 							tp.openInventory(DuelCustomizer.gen(tp, p));
+							OvOGUI.requests.remove(tp.getUniqueId());
+							OvOGUI.ingame.put(p.getUniqueId(), tp.getUniqueId());
+							OvOGUI.ingame.put(tp.getUniqueId(), p.getUniqueId());
+							p.sendMessage(m.OVO + ChatBuilder.build("The player is now customizing the 1V1"));
+						}else{
+							p.sendMessage(m.OVO + ChatBuilder.build("You are not invited to any game"));
 						}
 					}
 					if (pd.hasPermission("OvO.Admin", false)) {
@@ -49,6 +56,7 @@ public class Command1v1 implements CommandExecutor {
 								return true;
 							}
 							new Arena(name, sels.get(p.getName()), sels2.get(p.getName()));
+							ArenasManager.getArenas().saveArenas();
 
 							p.sendMessage(m.OVO + ChatBuilder.build("Arena created"));
 						} else if (args[0].equalsIgnoreCase("delete")) {
@@ -66,6 +74,8 @@ public class Command1v1 implements CommandExecutor {
 							ArenasManager.getArenas().delArena(arena);
 
 							p.sendMessage(m.OVO + ChatBuilder.build("Arena deleted"));
+							ArenasManager.getArenas().saveArenas();
+
 						} else if (args[0].equalsIgnoreCase("setpos1")) {
 							if (sels.containsKey(p.getName()))
 								sels.replace(p.getName(), p.getLocation());

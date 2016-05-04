@@ -1,6 +1,8 @@
 package net.apartium.servers.infernumpvp._1v1;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -8,32 +10,37 @@ import org.bukkit.Location;
 import net.apartium.servers.infernumpvp.InfernumPvP;
 
 public class ArenasManager {
-	private static ArenasManager a = new ArenasManager();
+
+	private static ArenasManager a;
+
+	static {
+		a = new ArenasManager();
+	}
 
 	public static ArenasManager getArenas() {
 		return a;
 	}
 
 	InfernumPvP main = InfernumPvP.getInstance();
-	ArrayList<Arena> arenas = new ArrayList<Arena>();
+	public static ArrayList<Arena> arenas = new ArrayList<Arena>();
 
 	public void addArena(Arena arena) {
-		if (!this.arenas.contains(arena)) {
-			this.arenas.add(arena);
+		if (!arenas.contains(arena)) {
+			arenas.add(arena);
 		}
 	}
 
 	public void delArena(Arena arena) {
-		if (this.arenas.contains(arena)) {
-			this.arenas.remove(arena);
+		if (arenas.contains(arena)) {
+			arenas.remove(arena);
 		}
 	}
 
 	public boolean isExist(String name) {
-		if ((this.arenas == null) || (this.arenas.isEmpty())) {
+		if ((arenas == null) || (arenas.isEmpty())) {
 			return false;
 		}
-		for (Arena arena : this.arenas) {
+		for (Arena arena : arenas) {
 			if (arena.getName().equalsIgnoreCase(name)) {
 				return true;
 			}
@@ -42,7 +49,7 @@ public class ArenasManager {
 	}
 
 	public ArrayList<Arena> getList() {
-		return this.arenas;
+		return arenas;
 	}
 
 	public boolean isReady(Arena arena) {
@@ -53,7 +60,7 @@ public class ArenasManager {
 	}
 
 	public Arena getArenaByName(String name) {
-		for (Arena arena : this.arenas) {
+		for (Arena arena : arenas) {
 			if (arena.getName().equalsIgnoreCase(name)) {
 				return arena;
 			}
@@ -61,11 +68,17 @@ public class ArenasManager {
 		return null;
 	}
 
+	public Arena randomArena() {
+		Random r = new Random();
+		int i = r.nextInt(getList().size());
+		return getArenas().getList().get(i);
+	}
+
 	public void saveArenas() {
 		for (String key : main.ac.getKeys(true)) {
 			main.ac.set(key, null);
 		}
-		for (Arena arena : this.arenas) {
+		for (Arena arena : arenas) {
 
 			main.ac.set(arena.getName() + ".pos1.world", arena.getPos1().getWorld().getName());
 			main.ac.set(arena.getName() + ".pos1.x", Double.valueOf(arena.getPos1().getX()));
@@ -81,7 +94,11 @@ public class ArenasManager {
 			main.ac.set(arena.getName() + ".pos2.pitch", Float.valueOf(arena.getPos2().getPitch()));
 			main.ac.set(arena.getName() + ".pos2.yaw", Float.valueOf(arena.getPos2().getYaw()));
 		}
-		this.main.saveConfig();
+		try {
+			this.main.ac.save(main.a);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void reloadArenas() {
@@ -108,7 +125,7 @@ public class ArenasManager {
 			pos2 = new Location(Bukkit.getWorld(main.ac.getString(key + ".pos2.world")), x2, y2, z2, yaw2, pitch2);
 
 			Arena arena = new Arena(name, pos1, pos2);
-			this.arenas.add(arena);
+			arenas.add(arena);
 		}
 	}
 }

@@ -1,11 +1,8 @@
 package net.apartium.servers.infernumpvp.regions;
 
-import java.io.File;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -21,7 +18,6 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import net.apartium.servers.infernumpvp.InfernumPvP;
 import net.apartium.servers.infernumpvp.PlayerData;
@@ -29,48 +25,28 @@ import net.apartium.servers.infernumpvp.regions.Region.Flag_List;
 import net.apartium.servers.infernumpvp.regions.Region.Flags;
 
 public class RegionListener implements Listener {
-	private static InfernumPvP plugin=InfernumPvP.getInstance();
-
+	private static InfernumPvP plugin = InfernumPvP.getInstance();
+	//private static Map<UUID,Region> players = new HashMap<>();
+	
 	public static boolean playerInRegion(Location loc) {
-		for (File f : plugin.rgFolder.listFiles()) {
-			if (f.exists()) {
-				FileConfiguration config = YamlConfiguration.loadConfiguration(f);
-				double fromx = config.getInt("location.fromX");
-				double tox = config.getInt("location.toX");
-				double fromz = config.getInt("location.fromZ");
-				double toz = config.getInt("location.toZ");
-				String w = config.getString("location.world");
-				if (loc.getX() < fromx && loc.getX() > tox && loc.getZ() < fromz && loc.getZ() > toz && loc.getWorld().getName().equals(w)) {
-					return true;
-				}
-			}
-		}
-		return false;
-
+		return getLocationRegion(loc)!=null;
 	}
 
 	public static Region getLocationRegion(Location loc) {
-		for (File f : plugin.rgFolder.listFiles()) {
-			if (f.isFile() && !f.getName().equals("global.yml")) {
-				FileConfiguration config = YamlConfiguration.loadConfiguration(f);
-				double fromx = config.getInt("location.fromx");
-				double tox = config.getInt("location.tox");
-				double fromz = config.getInt("location.fromz");
-				double toz = config.getInt("location.toz");
+		for (Region r : Region.regions.values()) {
+			if(!r.isGlobal()) {
+				double fromx = r.getMinLocation().getX();
+				double fromz = r.getMinLocation().getZ();
+				double tox = r.getMaxLocation().getX();
+				double toz = r.getMaxLocation().getZ();
+				World w = r.getWorld();
 
-				String w = config.getString("location.world");
-				String name = f.getName();
-				name.replaceAll(".yml", "");
-				if (loc.getX() < fromx && loc.getX() > tox && loc.getZ() <
-						fromz && loc.getZ() > toz && loc.getWorld().getName().equals(w)) {
-					return Region.byName(name);
-				}
-			} else {
-				return Region.byName("global");
+				if (loc.getX() < fromx && loc.getX() > tox && loc.getZ() < fromz && loc.getZ() > toz
+						&& loc.getWorld().getName().equals(w))
+					return r;	
 			}
 		}
 		return null;
-
 	}
 
 	@EventHandler
@@ -85,31 +61,21 @@ public class RegionListener implements Listener {
 
 	@SuppressWarnings("deprecation")
 	@EventHandler
-	public void onDrop(final PlayerDropItemEvent e) {
+	public void onDrop(PlayerDropItemEvent e) {
 		Player p = e.getPlayer();
-		if (playerInRegion(p.getLocation())) {
-			if (!getLocationRegion(p.getLocation()).getFlag(Flags.ITEMDROP)) {
+		if (playerInRegion(e.getItemDrop().getLocation())) {
+			if (!getLocationRegion(e.getItemDrop().getLocation()).getFlag(Flags.ITEMDROP)) {
 				e.setCancelled(true);
 				if (getLocationRegion(p.getLocation()).getFlag(Flags.ALLOW_SOUPDROP)) {
-					if (e.getItemDrop().getItemStack().getTypeId() == 281 || e.getItemDrop().getItemStack().getTypeId() == 282) {
+					if (e.getItemDrop().getItemStack().getTypeId() == 281
+							|| e.getItemDrop().getItemStack().getTypeId() == 282) {
 						e.setCancelled(false);
 					}
-				} else 
+				} else
 					e.setCancelled(true);
-				
-			} else 
-				e.setCancelled(false);
-			
-		}
-		if (e.isCancelled() == false) {
-			new BukkitRunnable() {
 
-				@Override
-				public void run() {
-					e.getItemDrop().setFireTicks(100);
-					cancel();
-				}
-			}.runTaskLater(plugin, 40L);
+			} else
+				e.setCancelled(false);
 		}
 	}
 
@@ -121,13 +87,9 @@ public class RegionListener implements Listener {
 			Region rgm = getLocationRegion(p.getLocation());
 			Bukkit.broadcastMessage(rgm.getName());
 
-			if (rgm.getFlag(Flags.ITEMPICKUP)) {
+			if (rgm.getFlag(Flags.ITEMPICKUP)) 
 				e.setCancelled(true);
-			}
-		} else {
-			e.setCancelled(false);
 		}
-
 	}
 
 	@EventHandler
@@ -136,7 +98,7 @@ public class RegionListener implements Listener {
 		PlayerData pd = new PlayerData(p);
 		if (playerInRegion(e.getBlock().getLocation())) {
 			Region rgm = getLocationRegion(e.getBlock().getLocation());
-			if (rgm.getFlag(Flags.BUILD) && !pd.hasPermission("cubedpvp.region."+rgm.getName()+".place", false)) {
+			if (rgm.getFlag(Flags.BUILD) && !pd.hasPermission("cubedpvp.region." + rgm.getName() + ".place", false)) {
 				p.sendMessage(plugin.REGIONS + "§4You cant place blocks here!");
 
 				e.setCancelled(true);
@@ -154,7 +116,7 @@ public class RegionListener implements Listener {
 
 		if (playerInRegion(e.getBlock().getLocation())) {
 			Region rgm = getLocationRegion(e.getBlock().getLocation());
-			if (rgm.getFlag(Flags.DESTROY) && !pd.hasPermission("cubedpvp.region."+rgm.getName()+".break", false)) {
+			if (rgm.getFlag(Flags.DESTROY) && !pd.hasPermission("cubedpvp.region." + rgm.getName() + ".break", false)) {
 				p.sendMessage(plugin.REGIONS + "§4You cant hasPermission blocks here!");
 				e.setCancelled(true);
 			}
@@ -171,14 +133,14 @@ public class RegionListener implements Listener {
 			Player p = (Player) e.getEntity();
 
 			if (playerInRegion(p.getLocation())) {
-				if (getLocationRegion(p.getLocation()).getFlag(Flags.PVP)||
-						getLocationRegion(d.getLocation()).getFlag(Flags.PVP)) {
+				if (getLocationRegion(p.getLocation()).getFlag(Flags.PVP)
+						|| getLocationRegion(d.getLocation()).getFlag(Flags.PVP)) {
 					e.setCancelled(true);
 					d.sendMessage(plugin.REGIONS + "§4You cant damage players here!");
 				} else {
 					p.sendMessage(plugin.REGIONS + "§4§l ERROR, PLEASE CONTACE ADMIN");
 				}
-			} 
+			}
 		}
 	}
 
@@ -200,11 +162,10 @@ public class RegionListener implements Listener {
 
 	@EventHandler
 	public void preCommand(PlayerCommandPreprocessEvent e) {
-		Player p = e.getPlayer(); 
+		Player p = e.getPlayer();
 		if (playerInRegion(p.getLocation())) {
 			Region rgm = getLocationRegion(p.getLocation());
-			if (rgm.getFlag(Flags.BLOCK_CMD) &&
-					rgm.getFlagsList(Flag_List.BLOCKED_CMD).contains(e.getMessage())
+			if (rgm.getFlag(Flags.BLOCK_CMD) && rgm.getFlagsList(Flag_List.BLOCKED_CMD).contains(e.getMessage())
 					&& rgm.getFlag(Flags.BLOCK_CMD)) {
 				p.sendMessage(plugin.REGIONS + "§4This command is blocked here!");
 				e.setCancelled(true);
@@ -231,7 +192,7 @@ public class RegionListener implements Listener {
 	@EventHandler
 	public void onMove(PlayerMoveEvent e) {
 		Player p = e.getPlayer();
-		
+
 		if (playerInRegion(p.getLocation())) {
 			Region rgm = getLocationRegion(p.getLocation());
 			if (rgm.getFlag(Flags.ENTRY) && !p.hasPermission("cubedpvp.region." + rgm.getName() + ".entry")) {
@@ -239,9 +200,9 @@ public class RegionListener implements Listener {
 				pd.spawn();
 				p.sendMessage(plugin.REGIONS + "§4You dont allowed to be here!");
 				e.setCancelled(true);
-			} else 
+			} else
 				e.setCancelled(false);
-			
+
 		}
 	}
 
@@ -253,7 +214,7 @@ public class RegionListener implements Listener {
 			if (!rgm.getFlag(Flags.EXPLODE)) {
 				ent.remove();
 				e.setCancelled(true);
-			} else 
+			} else
 				e.setCancelled(false);
 		}
 	}

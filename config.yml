@@ -1,0 +1,12 @@
+Settings:
+  enableBlocking: true
+  changeAttackSpeed: true
+  dropItemMsg: '&cYou dropped your &4%item% &cto block!'
+  enableGodApples: true
+  enableOldGoldenAppleEffects: true
+  enableOldGodAppleEffects: true
+  enableOldAttackDamageValues: true
+  enableOldArmorPoints: true
+  enableAutoLapisLazuli: true
+  enableAutoBlazeRod: true
+  enableCollision: false

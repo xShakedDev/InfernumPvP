@@ -27,17 +27,16 @@ public class ItemUtil {
 		return is;
 	}
 
-	public static ItemStack skull(String skullname, String player) {
-		ItemStack ret = new ItemStack(Material.SKULL_ITEM, 1, (short) SkullType.PLAYER.ordinal());
-		SkullMeta sm = (SkullMeta) ret.getItemMeta();
-		sm.setOwner(player);
-		sm.setDisplayName(skullname);
-		ret.setItemMeta(sm);
-		return ret;
+	public static ItemStack skull(String player) {
+		ItemStack is = new ItemStack(Material.SKULL_ITEM, 1, (short) SkullType.PLAYER.ordinal());
+		SkullMeta im = (SkullMeta) is.getItemMeta();
+		im.setOwner(player);
+		is.setItemMeta(im);
+		return is;
 	}
 
 	public static ItemStack getSkullFromURL(String url, String name) throws Exception {
-		ItemStack skull = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
+		ItemStack skull = new ItemStack(Material.SKULL_ITEM, 1, (short) SkullType.PLAYER.ordinal());
 		SkullMeta sm = (SkullMeta) skull.getItemMeta();
 		sm.setOwner("NacOJerk");
 		skull.setItemMeta(sm);
