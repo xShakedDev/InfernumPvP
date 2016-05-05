@@ -10,12 +10,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.inventory.EquipmentSlot;
 
 import mkremins.fanciful.FancyMessage;
 import net.apartium.servers.infernumpvp.InfernumPvP;
 import net.apartium.servers.infernumpvp.PlayerData;
 import net.apartium.servers.infernumpvp.utils.ChatBuilder;
-import net.apartium.servers.infernumpvp.utils.Cooldown;
 
 public class OvOListener implements Listener {
 	private static InfernumPvP m = InfernumPvP.getInstance();
@@ -37,41 +37,41 @@ public class OvOListener implements Listener {
 			Player p = e.getPlayer();
 			PlayerData pd = new PlayerData(p);
 			Player t = (Player) e.getRightClicked();
-			if (Cooldown.isCooling(p.getName(), "do1v1"))
-				return;
-            Cooldown.add(p.getName(), "do1v1", 1, System.currentTimeMillis());
-			if (p.getItemInHand().getType() == Material.BLAZE_ROD) {
-				if (ArenasManager.getArenas().getList().isEmpty() || ArenasManager.getArenas().getList() == null) {
-					pd.sendMessage(m.OVO + ChatBuilder.build("There is no arenas you can join."));
-					return;
-				}
-				Arena a = null;
-				a = ArenasManager.getArenas().randomArena();
-				if (a == null) {
-					pd.sendMessage(m.OVO + ChatBuilder.build("There is no arenas you can join."));
-					return;
-				}
-				if (a.isInuse()) {
-					pd.sendMessage(m.OVO + ChatBuilder.build("There is no arenas you can join."));
-					return;
-				}
-				if (!ingame.containsKey(e.getRightClicked().getUniqueId())) {
-					if (requests.get(p.getUniqueId()) != e.getRightClicked().getUniqueId()) {
-						if (requests.containsKey(p.getUniqueId())) {
-							requests.replace(p.getUniqueId(), t.getUniqueId());
-							return;
-						}
-						requests.put(p.getUniqueId(), t.getUniqueId());
-						a.setTempplayer(p);
-						pd.sendMessage(m.OVO + ChatBuilder.build("Waiting the other player to accept."));
-						new FancyMessage(ChatColor.AQUA + pd.getNick() + " invited you to duel").then(" §6[Accept]")
-								.tooltip("Click to accept").command("/ovo join " + p.getName()).send(t);
-					} else {
-						pd.sendMessage(m.OVO + ChatBuilder.build("You already invited this player to game."));
+			EquipmentSlot ev = e.getHand();
+			if (ev.equals(EquipmentSlot.HAND)) {
+				if (p.getItemInHand().getType() == Material.BLAZE_ROD) {
+					if (ArenasManager.getArenas().getList().isEmpty() || ArenasManager.getArenas().getList() == null) {
+						pd.sendMessage(m.OVO + ChatBuilder.build("There is no arenas you can join."));
+						return;
 					}
-				} else {
-					pd.sendMessage(m.OVO
-							+ ChatBuilder.build("The player you trying to invite is already ingame/customizing game."));
+					Arena a = null;
+					a = ArenasManager.getArenas().randomArena();
+					if (a == null) {
+						pd.sendMessage(m.OVO + ChatBuilder.build("There is no arenas you can join."));
+						return;
+					}
+					if (a.isInuse()) {
+						pd.sendMessage(m.OVO + ChatBuilder.build("There is no arenas you can join."));
+						return;
+					}
+					if (!ingame.containsKey(e.getRightClicked().getUniqueId())) {
+						if (requests.get(p.getUniqueId()) != e.getRightClicked().getUniqueId()) {
+							if (requests.containsKey(p.getUniqueId())) {
+								requests.replace(p.getUniqueId(), t.getUniqueId());
+								return;
+							}
+							requests.put(p.getUniqueId(), t.getUniqueId());
+							a.setTempplayer(p);
+							pd.sendMessage(m.OVO + ChatBuilder.build("Waiting the other player to accept."));
+							new FancyMessage(ChatColor.AQUA + pd.getNick() + " invited you to duel").then(" §6[Accept]")
+									.tooltip("Click to accept").command("/ovo join " + p.getName()).send(t);
+						} else {
+							pd.sendMessage(m.OVO + ChatBuilder.build("You already invited this player to game."));
+						}
+					} else {
+						pd.sendMessage(m.OVO + ChatBuilder
+								.build("The player you trying to invite is already ingame/customizing game."));
+					}
 				}
 			}
 		}
