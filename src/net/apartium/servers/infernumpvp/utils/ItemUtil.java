@@ -1,5 +1,9 @@
 package net.apartium.servers.infernumpvp.utils;
 
+import static net.apartium.servers.infernumpvp.utils.NMSClassInteracter.asBukkitCopy;
+import static net.apartium.servers.infernumpvp.utils.NMSClassInteracter.asNMSCopy;
+import static net.apartium.servers.infernumpvp.utils.NMSClassInteracter.getNMS;
+
 import java.lang.reflect.Method;
 import java.util.UUID;
 
@@ -9,9 +13,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
-import static net.apartium.servers.infernumpvp.utils.NMSClassInteracter.asBukkitCopy;
-import static net.apartium.servers.infernumpvp.utils.NMSClassInteracter.asNMSCopy;
-import static net.apartium.servers.infernumpvp.utils.NMSClassInteracter.getNMS;
+
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 

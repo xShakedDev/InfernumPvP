@@ -2,7 +2,6 @@ package net.apartium.servers.infernumpvp.test;
 
 import java.util.Arrays;
 
-
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_9_R1.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;

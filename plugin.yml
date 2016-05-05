@@ -24,3 +24,5 @@ commands:
     description: ...
   ovo:
     description: onevsone
+  break:
+    description: allow break and disallow

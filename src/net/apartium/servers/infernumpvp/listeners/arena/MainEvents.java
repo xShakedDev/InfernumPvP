@@ -7,7 +7,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockBurnEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
@@ -44,7 +46,25 @@ public class MainEvents implements Listener {
 		}
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGH)
+	public void onBreak(BlockBreakEvent e) {
+		if (m.breaks.contains(e.getPlayer().getUniqueId())) {
+			e.setCancelled(false);
+		} else {
+			e.setCancelled(true);
+		}
+	}
+
+	@EventHandler(priority = EventPriority.HIGH)
+	public void onBreak(BlockPlaceEvent e) {
+		if (m.breaks.contains(e.getPlayer().getUniqueId())) {
+			e.setCancelled(false);
+		} else {
+			e.setCancelled(true);
+		}
+	}
+
+	@EventHandler(priority = EventPriority.HIGH)
 	public void onRespawn(PlayerRespawnEvent e) {
 		new BukkitRunnable() {
 
@@ -55,13 +75,13 @@ public class MainEvents implements Listener {
 		}.runTaskLater(m, 1);
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGH)
 	public void noFood(FoodLevelChangeEvent event) {
 		event.setCancelled(true);
 		((Player) event.getEntity()).setFoodLevel(20);
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGH)
 	public void noMobs(EntitySpawnEvent e) {
 		e.setCancelled(true);
 	}
@@ -91,18 +111,20 @@ public class MainEvents implements Listener {
 		}
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGH)
 	public void onDamage(EntityDamageByEntityEvent ev) {
 		if ((ev.getEntity() instanceof Player)) {
 			Player p = (Player) ev.getEntity();
-
+			if (ev.getEntity().getWorld() == m.spawnWorld) {
+				ev.setCancelled(true);
+				return;
+			}
 			ItemStack[] armor = p.getInventory().getArmorContents();
 			for (ItemStack armo : armor) {
 				if (armo != null) {
-					if (armo.getType() != Material.SKULL) {
+					if (armo.getTypeId() != 397)
 						armo.setDurability((short) -armo.getType().getMaxDurability());
-						p.updateInventory();
-					}
+					p.updateInventory();
 				}
 			}
 		}

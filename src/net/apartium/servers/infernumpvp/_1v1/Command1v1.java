@@ -28,15 +28,19 @@ public class Command1v1 implements CommandExecutor {
 				if (args.length >= 1) {
 					if (args[0].equalsIgnoreCase("join")) {
 						Player tp = Bukkit.getPlayer(args[1]);
-						if (OvOGUI.requests.containsKey(tp.getUniqueId())
-								&& !OvOGUI.ingame.containsKey(tp.getUniqueId())
-								&& OvOGUI.requests.get(tp.getUniqueId()).equals(p.getUniqueId())) {
+						if (OvOListener.requests.containsKey(tp.getUniqueId())
+								&& !OvOListener.ingame.containsKey(tp.getUniqueId())
+								&& OvOListener.requests.get(tp.getUniqueId()).equals(p.getUniqueId())) {
 							tp.openInventory(DuelCustomizer.gen(tp, p));
-							OvOGUI.requests.remove(tp.getUniqueId());
-							OvOGUI.ingame.put(p.getUniqueId(), tp.getUniqueId());
-							OvOGUI.ingame.put(tp.getUniqueId(), p.getUniqueId());
+							OvOListener.ingame.put(p.getUniqueId(), tp.getUniqueId());
+							OvOListener.ingame.put(tp.getUniqueId(), p.getUniqueId());
+							OvOListener.requests.remove(tp.getUniqueId());
+							Arena a = ArenasManager.getArenas().getArenaByTempPlayer(tp);
+							a.setPlayerinarena(tp);
+							a.setOpponentinarena(p);
+							a.setInuse(true);
 							p.sendMessage(m.OVO + ChatBuilder.build("The player is now customizing the 1V1"));
-						}else{
+						} else {
 							p.sendMessage(m.OVO + ChatBuilder.build("You are not invited to any game"));
 						}
 					}

@@ -2,10 +2,10 @@ package net.apartium.servers.infernumpvp._1v1;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Random;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 
 import net.apartium.servers.infernumpvp.InfernumPvP;
 
@@ -68,10 +68,31 @@ public class ArenasManager {
 		return null;
 	}
 
+	public Arena getArenaByPlayer(Player p) {
+		for (Arena arena : arenas) {
+			if (arena.getPlayerinarena() == p || arena.getOpponentinarena() == p) {
+				return arena;
+			}
+		}
+		return null;
+	}
+
+	public Arena getArenaByTempPlayer(Player p) {
+		for (Arena arena : arenas) {
+			if (arena.getTempplayer() == p) {
+				return arena;
+			}
+		}
+		return null;
+	}
+
 	public Arena randomArena() {
-		Random r = new Random();
-		int i = r.nextInt(getList().size());
-		return getArenas().getList().get(i);
+		for (Arena a : arenas) {
+			if (!a.isInuse()) {
+				return a;
+			}
+		}
+		return null;
 	}
 
 	public void saveArenas() {
@@ -124,8 +145,8 @@ public class ArenasManager {
 
 			pos2 = new Location(Bukkit.getWorld(main.ac.getString(key + ".pos2.world")), x2, y2, z2, yaw2, pitch2);
 
+			@SuppressWarnings("unused")
 			Arena arena = new Arena(name, pos1, pos2);
-			arenas.add(arena);
 		}
 	}
 }

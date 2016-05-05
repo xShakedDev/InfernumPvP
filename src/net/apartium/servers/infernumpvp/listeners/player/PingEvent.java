@@ -15,7 +15,7 @@ public class PingEvent implements Listener {
 	}
 
 	private String status() {
-		if (Bukkit.hasWhitelist())
+		if (!Bukkit.hasWhitelist())
 			return "§a§nJoin now!";
 		else
 			return "§c§nMaintance";

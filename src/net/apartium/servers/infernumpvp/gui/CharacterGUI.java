@@ -38,10 +38,11 @@ public class CharacterGUI implements Listener{
 		}
 	}
 	
+	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void onInteract(PlayerInteractEvent e) {
-		if(e.getPlayer().getItemOnCursor().getType()==Material.SKULL||
-				e.getPlayer().getItemOnCursor().getType()==Material.SKULL_ITEM)
+		if(e.getPlayer().getItemInHand().getType()==Material.SKULL||
+				e.getPlayer().getItemInHand().getType()==Material.SKULL_ITEM)
 			e.getPlayer().openInventory(of(e.getPlayer()));
 	}
 }

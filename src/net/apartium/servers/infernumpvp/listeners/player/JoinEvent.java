@@ -1,7 +1,5 @@
 package net.apartium.servers.infernumpvp.listeners.player;
 
-import java.util.UUID;
-
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -10,7 +8,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 import net.apartium.servers.infernumpvp.InfernumPvP;
 import net.apartium.servers.infernumpvp.PlayerData;
-import net.apartium.servers.infernumpvp._1v1.OvOGUI;
 
 public class JoinEvent implements Listener {
 	private static InfernumPvP m = InfernumPvP.getInstance();
@@ -31,9 +28,5 @@ public class JoinEvent implements Listener {
 		}
 		pp.saveKits();
 		pp.savePData();
-		for (UUID ps : OvOGUI.ingame.keySet()) {
-			p.hidePlayer(Bukkit.getPlayer(ps));
-			Bukkit.getPlayer(ps).hidePlayer(p);
-		}
 	}
 }

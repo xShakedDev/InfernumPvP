@@ -42,8 +42,9 @@ public class PyroKit extends Kit {
 
 	@Override
 	public void onFill(Player p) {
-		p.getInventory().addItem(new ItemStack(Material.GOLD_SWORD));
-		p.getInventory().addItem(new ItemStack(Material.FLINT_AND_STEEL));
+		ItemStack sword = new ItemStack(Material.GOLD_SWORD);
+		sword.addUnsafeEnchantment(Enchantment.FIRE_ASPECT, 2);
+		p.getInventory().addItem(sword);
 	}
 
 	@Override
