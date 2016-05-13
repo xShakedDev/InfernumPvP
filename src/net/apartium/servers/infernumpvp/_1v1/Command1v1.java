@@ -31,21 +31,26 @@ public class Command1v1 implements CommandExecutor {
 						if (OvOListener.requests.containsKey(tp.getUniqueId())
 								&& !OvOListener.ingame.containsKey(tp.getUniqueId())
 								&& OvOListener.requests.get(tp.getUniqueId()).equals(p.getUniqueId())) {
-							tp.openInventory(DuelCustomizer.gen(tp, p));
-							OvOListener.ingame.put(p.getUniqueId(), tp.getUniqueId());
-							OvOListener.ingame.put(tp.getUniqueId(), p.getUniqueId());
-							OvOListener.requests.remove(tp.getUniqueId());
-							Arena a = ArenasManager.getArenas().getArenaByTempPlayer(tp);
-							a.setPlayerinarena(tp);
-							a.setOpponentinarena(p);
-							a.setInuse(true);
-							p.sendMessage(m.OVO + ChatBuilder.build("The player is now customizing the 1V1"));
+							if (ArenasManager.getArenas().getArenaByTempPlayer(tp) != null) {
+								tp.openInventory(DuelCustomizer.gen(tp, p));
+								OvOListener.ingame.put(p.getUniqueId(), tp.getUniqueId());
+								OvOListener.ingame.put(tp.getUniqueId(), p.getUniqueId());
+								OvOListener.requests.remove(tp.getUniqueId());
+								Arena a = ArenasManager.getArenas().getArenaByTempPlayer(tp);
+								a.setPlayerinarena(tp);
+								a.setOpponentinarena(p);
+								a.setTempplayer(null);
+								a.setCostumizing(true);
+								p.sendMessage(m.OVO + ChatBuilder.build("The player is now customizing the 1V1"));
+							} else {
+								p.sendMessage(m.OVO + ChatBuilder.build("You are not invited to any game"));
+							}
 						} else {
 							p.sendMessage(m.OVO + ChatBuilder.build("You are not invited to any game"));
 						}
 					}
 					if (pd.hasPermission("OvO.Admin", false)) {
-						if (args[0].equalsIgnoreCase("createarena")) {
+						if (args[0].equalsIgnoreCase("create")) {
 							if (args.length != 2) {
 								p.sendMessage(m.OVO + ChatBuilder.build("/ovo create <arena>"));
 								return true;

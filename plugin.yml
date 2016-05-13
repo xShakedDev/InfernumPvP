@@ -2,7 +2,6 @@ name: InfernumPvP
 version: 1.0
 main: net.apartium.servers.infernumpvp.InfernumPvP
 authors: [xShakedDev, Voigon]
-depends: [ChatPlus]
 commands:
   infernum:
     description: /infernum <kit> <player>
@@ -12,16 +11,8 @@ commands:
     description: /spawn
   test:
     description: test command
-  mw:
-    desciprtion: multiworld
   report:
     description: report
-  region:
-    description: ...
-  rg:
-    description: ...
-  regions:
-    description: ...
   ovo:
     description: onevsone
   break:

@@ -22,6 +22,7 @@ public class Spawn_Command implements CommandExecutor {
 	@Override
 	public boolean onCommand(CommandSender arg0, Command arg1, String arg2, String[] arg3) {
 		Player p = (Player) arg0;
+		p.closeInventory();
 		p.teleport(new Location(m.spawnWorld, -485.500, 123.5, -98.5));
 
 		ItemStack select = ItemUtil.easy(Material.CHEST, ChatColor.GRAY + "Kits");
@@ -39,6 +40,7 @@ public class Spawn_Command implements CommandExecutor {
 		ItemStack is = new ItemStack(Material.SKULL_ITEM, 1, (short) SkullType.PLAYER.ordinal());
 		SkullMeta im = (SkullMeta) is.getItemMeta();
 		im.setOwner(p.getName());
+		im.setDisplayName("§c" + p.getName() + " Stats");
 		is.setItemMeta(im);
 		p.getInventory().addItem(ItemUtil.easy(Material.BLAZE_ROD, "§61V1 Stick"));
 		p.getInventory().setItem(8, is);

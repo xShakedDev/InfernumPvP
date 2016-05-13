@@ -1,5 +1,7 @@
 package net.apartium.servers.infernumpvp._1v1;
 
+import java.util.ArrayList;
+
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -7,11 +9,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import net.apartium.servers.infernumpvp.InfernumPvP;
 import net.apartium.servers.infernumpvp.utils.ChatBuilder;
@@ -19,9 +22,11 @@ import net.apartium.servers.infernumpvp.utils.InvUtil;
 
 public class DuelCustomizer implements Listener {
 	private static InfernumPvP m = InfernumPvP.getInstance();
+	static Inventory i;
+	static ArrayList<String> nomove = new ArrayList<>();
 
 	public static Inventory gen(Player inviter, Player invited) {
-		Inventory i = Bukkit.createInventory(null, 9 * 6, "§6" + inviter.getName() + "§4 VS §6" + invited.getName());
+		i = Bukkit.createInventory(null, 9 * 6, "§6" + inviter.getName() + "§4 VS §6" + invited.getName());
 		ItemStack head = new ItemStack(Material.DIAMOND_HELMET);
 		ItemStack chest = new ItemStack(Material.DIAMOND_CHESTPLATE);
 		ItemStack leg = new ItemStack(Material.DIAMOND_LEGGINGS);
@@ -56,11 +61,11 @@ public class DuelCustomizer implements Listener {
 	public void invClick(InventoryClickEvent e) {
 		if (e.getInventory() == null)
 			return;
-		if (e.getInventory().getSize() < 35)
-			return;
 		if (e.getInventory().getTitle() == null)
 			return;
-		if (e.getInventory().getType() == InventoryType.CREATIVE)
+		if (e.getCurrentItem() == null)
+			return;
+		if (e.getCurrentItem().getItemMeta() == null)
 			return;
 		if (e.getInventory().getTitle().contains("§4 VS")) {
 			if (e.getInventory().getItem(43).getType() == Material.STAINED_CLAY
@@ -126,6 +131,10 @@ public class DuelCustomizer implements Listener {
 					clicked.setItemMeta(clickedm);
 					clicked.setType(Material.BOWL);
 				} else if (clicked.getType() == Material.BOWL) {
+					clickedm.setDisplayName("§aWith Pots");
+					clicked.setItemMeta(clickedm);
+					e.getInventory().setItem(20, new ItemStack(Material.POTION, 1, (short) 16421));
+				} else if (clicked.getType() == Material.SPLASH_POTION) {
 					clickedm.setDisplayName("§aWith Soup");
 					clicked.setItemMeta(clickedm);
 					clicked.setType(Material.MUSHROOM_SOUP);
@@ -134,10 +143,10 @@ public class DuelCustomizer implements Listener {
 				if (clicked.getType() == Material.STAINED_CLAY) {
 					// START
 					if (clicked.getDurability() == 5) {
-						Player tar = (Player) Bukkit.getPlayer(OvOListener.ingame.get(e.getWhoClicked().getUniqueId()));
 						Player p = (Player) e.getWhoClicked();
-						e.getWhoClicked().closeInventory();
+						ArenasManager.getArenas().getArenaByPlayer(p).setCostumizing(false);
 						Arena a = ArenasManager.getArenas().getArenaByPlayer((Player) e.getWhoClicked());
+						Player tar = a.getOpponentinarena();
 						e.getWhoClicked().teleport(a.getPos1());
 						tar.teleport(a.getPos2());
 						tar.getInventory().getItemInHand().setType(Material.AIR);
@@ -151,6 +160,9 @@ public class DuelCustomizer implements Listener {
 						tar.getInventory().addItem(e.getInventory().getItem(24));
 						if (e.getInventory().getItem(20).getType() == Material.MUSHROOM_SOUP) {
 							m.giveSoup(tar);
+						}
+						if (e.getInventory().getItem(20).getType() == Material.SPLASH_POTION) {
+							m.givePots(tar);
 						}
 						p.teleport(a.getPos1());
 						p.getInventory().clear();
@@ -166,20 +178,55 @@ public class DuelCustomizer implements Listener {
 						tar.setGameMode(GameMode.SURVIVAL);
 						p.setHealth(20);
 						tar.setHealth(20);
+						a.setInuse(true);
 						if (e.getInventory().getItem(20).getType() == Material.MUSHROOM_SOUP) {
 							m.giveSoup(p);
+						} else if (e.getInventory().getItem(20).getType() == Material.SPLASH_POTION) {
+							m.givePots(p);
 						}
+						nomove.add(p.getName());
+						nomove.add(tar.getName());
+						new BukkitRunnable() {
+							int timer = 5;
+
+							@Override
+							public void run() {
+								if (timer == 0) {
+									p.sendMessage(m.OVO + ChatBuilder.build("GO GO GO!!!"));
+									tar.sendMessage(m.OVO + ChatBuilder.build("GO GO GO!!!"));
+									nomove.remove(p.getName());
+									nomove.remove(tar.getName());
+									cancel();
+								} else {
+									p.sendMessage(m.OVO + ChatBuilder.build(timer + ""));
+									tar.sendMessage(m.OVO + ChatBuilder.build(timer + ""));
+									timer--;
+								}
+							}
+						}.runTaskTimer(m, 0, 20l);
 					} else {
 						// CANCEL
 						if (clicked.getDurability() == 14) {
-							Player tar = (Player) Bukkit.getPlayer(OvOListener.ingame.get(e.getWhoClicked().getUniqueId()));
 							Player p = (Player) e.getWhoClicked();
-							ArenasManager.getArenas().getArenaByPlayer(p).endDuel();
+							ArenasManager.getArenas().getArenaByPlayer(p).setInuse(false);
 							p.closeInventory();
-							tar.sendMessage(m.OVO + ChatBuilder.build("Your opponent canceled the duel."));
-							p.sendMessage(m.OVO + ChatBuilder.build("You canceled the duel."));
 						}
 					}
+				}
+			}
+		}
+	}
+
+	@EventHandler
+	public void onClose(InventoryCloseEvent e) {
+		if (ArenasManager.getArenas().getArenaByPlayer((Player) e.getPlayer()) != null) {
+			if (ArenasManager.getArenas().getArenaByPlayer((Player) e.getPlayer()).isCostumizing() == true) {
+				if (e.getInventory().equals(i)) {
+					Player tar = (Player) Bukkit.getPlayer(OvOListener.ingame.get(e.getPlayer().getUniqueId()));
+					Player p = (Player) e.getPlayer();
+					ArenasManager.getArenas().getArenaByPlayer(p).endDuel();
+					tar.sendMessage(m.OVO + ChatBuilder.build("Your opponent canceled the duel."));
+					p.sendMessage(m.OVO + ChatBuilder.build("You canceled the duel."));
 				}
 			}
 		}

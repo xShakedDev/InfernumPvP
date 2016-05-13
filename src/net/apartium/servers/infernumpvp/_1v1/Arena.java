@@ -1,6 +1,5 @@
 package net.apartium.servers.infernumpvp._1v1;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -12,11 +11,13 @@ public class Arena {
 	private Player playerinarena;
 	private Player tempplayer;
 	private Player Opponentinarena;
+	private boolean costumizing;
 
 	public Arena(String name, Location pos1, Location pos2) {
 		this.name = name;
 		this.pos1 = pos1;
 		this.pos2 = pos2;
+		this.setCostumizing(false);
 		this.setInuse(false);
 		ArenasManager.getArenas().addArena(this);
 	}
@@ -34,12 +35,12 @@ public class Arena {
 	}
 
 	public void endDuel() {
-		Bukkit.dispatchCommand(getPlayerinarena(), "spawn");
-		Bukkit.dispatchCommand(Bukkit.getPlayer(OvOListener.ingame.get(getPlayerinarena().getUniqueId())), "spawn");
-		OvOListener.ingame.remove(OvOListener.ingame.get(getPlayerinarena().getUniqueId()));
-		OvOListener.ingame.remove(getPlayerinarena().getUniqueId());
+		OvOListener.ingame.remove(Opponentinarena.getUniqueId());
+		OvOListener.ingame.remove(playerinarena.getUniqueId());
 		setInuse(false);
 		setPlayerinarena(null);
+		setOpponentinarena(null);
+		setCostumizing(false);
 	}
 
 	public boolean isInuse() {
@@ -75,6 +76,14 @@ public class Arena {
 
 	public void setOpponentinarena(Player Opponentinarena) {
 		this.Opponentinarena = Opponentinarena;
+	}
+
+	public boolean isCostumizing() {
+		return costumizing;
+	}
+
+	public void setCostumizing(boolean costumizing) {
+		this.costumizing = costumizing;
 	}
 
 }

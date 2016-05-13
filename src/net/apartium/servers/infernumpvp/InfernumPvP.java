@@ -10,6 +10,7 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.command.CommandExecutor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -22,8 +23,6 @@ import net.apartium.servers.infernumpvp._1v1.OvOListener;
 import net.apartium.servers.infernumpvp.commands.Break_Command;
 import net.apartium.servers.infernumpvp.commands.Coins_Command;
 import net.apartium.servers.infernumpvp.commands.Infernum_Command;
-import net.apartium.servers.infernumpvp.commands.MultiWorld_Command;
-import net.apartium.servers.infernumpvp.commands.Region_Command;
 import net.apartium.servers.infernumpvp.commands.Report_Command;
 import net.apartium.servers.infernumpvp.commands.Spawn_Command;
 import net.apartium.servers.infernumpvp.commands.Test_Command;
@@ -34,6 +33,7 @@ import net.apartium.servers.infernumpvp.listeners.arena.AntiTnT;
 import net.apartium.servers.infernumpvp.listeners.arena.EntityShotEvent;
 import net.apartium.servers.infernumpvp.listeners.arena.MainEvents;
 import net.apartium.servers.infernumpvp.listeners.kits.FisherEvents;
+import net.apartium.servers.infernumpvp.listeners.kits.StomperEvents;
 import net.apartium.servers.infernumpvp.listeners.kits.SwitcherEvents;
 import net.apartium.servers.infernumpvp.listeners.player.ChatEvent;
 import net.apartium.servers.infernumpvp.listeners.player.CommandEvent;
@@ -41,9 +41,6 @@ import net.apartium.servers.infernumpvp.listeners.player.DeathEvent;
 import net.apartium.servers.infernumpvp.listeners.player.JoinEvent;
 import net.apartium.servers.infernumpvp.listeners.player.LeaveEvent;
 import net.apartium.servers.infernumpvp.listeners.player.PingEvent;
-import net.apartium.servers.infernumpvp.regions.InventoryFlags;
-import net.apartium.servers.infernumpvp.regions.Region;
-import net.apartium.servers.infernumpvp.regions.RegionListener;
 import net.apartium.servers.infernumpvp.utils.Cooldown;
 import net.apartium.servers.infernumpvp.utils.IOUtil;
 
@@ -55,7 +52,10 @@ public class InfernumPvP extends JavaPlugin {
 	public FileConfiguration kc;
 	public File a;
 	public FileConfiguration ac;
+	public File r;
+	public FileConfiguration rc;
 	public World spawnWorld;
+
 	public String PREFIX = "§b§l", SUFFIX = "  §7> ", ARENA = PREFIX + "Infernum" + SUFFIX,
 			KIT_SHOP = PREFIX + "Kits" + SUFFIX, ECONOMY = PREFIX + "Coins" + SUFFIX,
 			SERVER = PREFIX + "Server" + SUFFIX, ADMINISTRATION = PREFIX + "Administration" + SUFFIX,
@@ -71,10 +71,6 @@ public class InfernumPvP extends JavaPlugin {
 
 	public void onEnable() {
 		plugin = this;
-
-		for (Player p : Bukkit.getOnlinePlayers()) {
-			p.showPlayer(p);
-		}
 		spawnWorld = Bukkit.getWorld("spawn1");
 
 		spawnWorld.setSpawnLocation(-485, 123, -98);
@@ -89,6 +85,9 @@ public class InfernumPvP extends JavaPlugin {
 		Entry<File, FileConfiguration> ent2 = IOUtil.handleYML(getDataFolder(), "/arenas.yml");
 		a = ent2.getKey();
 		ac = ent2.getValue();
+		Entry<File, FileConfiguration> ent3 = IOUtil.handleYML(getDataFolder(), "/ranks.yml");
+		r = ent3.getKey();
+		rc = ent3.getValue();
 		ArenasManager.getArenas().reloadArenas();
 		getServer().getPluginManager().registerEvents(new OvOListener(), this);
 		getServer().getPluginManager().registerEvents(new MainEvents(), this);
@@ -98,8 +97,10 @@ public class InfernumPvP extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(ShopGUI.events, this);
 		getServer().getPluginManager().registerEvents(new JoinEvent(), this);
 		getServer().getPluginManager().registerEvents(new PingEvent(), this);
-		getServer().getPluginManager().registerEvents(new RegionListener(), this);
-		getServer().getPluginManager().registerEvents(new InventoryFlags(), this);
+		// getServer().getPluginManager().registerEvents(new RegionListener(),
+		// this);
+		// getServer().getPluginManager().registerEvents(new InventoryFlags(),
+		// this);
 		getServer().getPluginManager().registerEvents(new FisherEvents(), this);
 		getServer().getPluginManager().registerEvents(new SwitcherEvents(), this);
 		getServer().getPluginManager().registerEvents(new CharacterGUI(), this);
@@ -108,17 +109,21 @@ public class InfernumPvP extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new DuelCustomizer(), this);
 		getServer().getPluginManager().registerEvents(new CommandEvent(), this);
 		getServer().getPluginManager().registerEvents(new LeaveEvent(), this);
+		getServer().getPluginManager().registerEvents(new StomperEvents(), this);
 
 		getServer().getPluginCommand("coins").setExecutor(new Coins_Command());
 		getServer().getPluginCommand("infernum").setExecutor(new Infernum_Command());
 		getServer().getPluginCommand("spawn").setExecutor(new Spawn_Command());
 		getServer().getPluginCommand("test").setExecutor(new Test_Command());
-		getServer().getPluginCommand("mw").setExecutor(new MultiWorld_Command());
+		// getServer().getPluginCommand("mw").setExecutor(new
+		// MultiWorld_Command());
 		getServer().getPluginCommand("report").setExecutor(new Report_Command());
 		getServer().getPluginCommand("ovo").setExecutor(new Command1v1());
-		getServer().getPluginCommand("rg").setExecutor(new Region_Command());
-		getServer().getPluginCommand("region").setExecutor(new Region_Command());
-		getServer().getPluginCommand("regions").setExecutor(new Region_Command());
+		// getServer().getPluginCommand("rg").setExecutor(new Region_Command());
+		// getServer().getPluginCommand("region").setExecutor(new
+		// Region_Command());
+		// getServer().getPluginCommand("regions").setExecutor(new
+		// Region_Command());
 		getServer().getPluginCommand("break").setExecutor(new Break_Command());
 		Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
 
@@ -127,10 +132,27 @@ public class InfernumPvP extends JavaPlugin {
 				Cooldown.handleCooldowns();
 			}
 		}, 1L, 1L);
-		for (File f : rgFolder.listFiles()) {
-			rgFiles.put(f.getName().replace(".yml", ""), f);
-			Region.createNew(f.getName().replace(".yml", ""));
-		}
+		//
+		// new BukkitRunnable() {
+		//
+		// @Override
+		// public void run() {
+		// for (World w : Bukkit.getWorlds())
+		// w.setTime(0);
+		// Bukkit.broadcastMessage(ARENA + ChatBuilder.build("Welcome to",
+		// "InfernumPvP"));
+		// }
+		// }.runTaskLater(this, 1200L);
+		// for (File f : rgFolder.listFiles()) {
+		// if (f.exists()) {
+		// rgFiles.put(f.getName().replace(".yml", ""), f);
+		// Region.createNew(f.getName().replace(".yml", ""));
+		// }
+		// }
+	}
+
+	public void registerCommand(CommandExecutor ce, String name) {
+		Bukkit.getPluginCommand(name).setExecutor(ce);
 	}
 
 	@Override
@@ -158,6 +180,12 @@ public class InfernumPvP extends JavaPlugin {
 		for (int i = 1; i < 35; i++) {
 			p.getInventory().addItem(new ItemStack(Material.MUSHROOM_SOUP));
 			p.getInventory().setItem(35, new ItemStack(Material.BOWL));
+		}
+	}
+
+	public void givePots(Player p) {
+		for (int i = 1; i < 35; i++) {
+			p.getInventory().addItem(new ItemStack(Material.POTION, 1, (short) 16421));
 		}
 	}
 }

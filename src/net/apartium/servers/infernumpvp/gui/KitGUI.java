@@ -37,9 +37,11 @@ public class KitGUI {
 			lore.clear();
 			if (k.cost() == 0) {
 				lore.add("§aFree Kit");
-			} else
-				lore.add(pp.hasKit(k) ? "§aUnlocked" : "§cKit price: " + k.cost());
-
+			} else {
+				lore.add(pp.hasKit(k) ? "§aUnlocked" : "§cLocked");
+				lore.add(pp.hasKit(k) ? null : "§cUse The KitShop To Buy");
+			}
+			lore.add(k.desc());
 			kitm.setLore(lore);
 			kit.setItemMeta(kitm);
 			i.setItem(count, kit);
@@ -78,16 +80,14 @@ public class KitGUI {
 					return;
 				if (e.getCurrentItem() == null)
 					return;
-				if (!e.getCurrentItem().hasItemMeta())
-					return;
 				e.setCancelled(true);
 				p.closeInventory();
-				if (e.getCurrentItem().getType() != Material.STAINED_GLASS_PANE)
-					Kit.give(Kit.byItem(e.getCurrentItem().getType()), p);
-				else
-					e.setCancelled(true);
+				if (Kit.isKit(e.getCurrentItem().getItemMeta().getDisplayName().replace("§a", ""))) {
+					if (e.getCurrentItem().getType() != Material.STAINED_GLASS_PANE) {
+						Kit.give(Kit.byName(e.getCurrentItem().getItemMeta().getDisplayName().replace("§a", "")), p);
+					}
+				}
 			}
 		}
-
 	};
 }

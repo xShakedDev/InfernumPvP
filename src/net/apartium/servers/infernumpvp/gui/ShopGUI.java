@@ -75,26 +75,24 @@ public class ShopGUI {
 			PlayerData pp = new PlayerData(p);
 			if (e.getInventory().getName() == null)
 				return;
-			if (e.getInventory().getName().equalsIgnoreCase("Shop Menu")) {
+			if (e.getInventory().getTitle().equalsIgnoreCase("Shop Menu")) {
 				if (e.getClickedInventory() == null)
 					return;
 				if (e.getCurrentItem() == null)
 					return;
-				if (!e.getCurrentItem().hasItemMeta())
-					return;
 				e.setCancelled(true);
 				p.closeInventory();
-				if (Kit.isKit(Kit.byItem(e.getCurrentItem().getType()).name())) {
+				if (Kit.isKit(e.getCurrentItem().getItemMeta().getDisplayName().replace("§a", ""))
+						|| Kit.isKit(e.getCurrentItem().getItemMeta().getDisplayName().replace("§c", ""))) {
 					if (e.getCurrentItem().getType() != Material.STAINED_GLASS_PANE
 							|| e.getCurrentItem().getType() != Material.GOLD_INGOT) {
 						if (!pp.hasKit(Kit.byItem(e.getCurrentItem().getType()))) {
-							pp.buyKit(Kit.byItem(e.getCurrentItem().getType()));
+							pp.buyKit(Kit.byName(e.getCurrentItem().getItemMeta().getDisplayName().replace("§a", "")));
 						} else {
 							p.sendMessage(m.KIT_SHOP + ChatBuilder.build("Already got the kit",
-									Kit.byItem(e.getCurrentItem().getType()).name()));
+									e.getCurrentItem().getItemMeta().getDisplayName().replace("§c", "")));
 						}
-					} else
-						e.setCancelled(true);
+					}
 				}
 			}
 		}

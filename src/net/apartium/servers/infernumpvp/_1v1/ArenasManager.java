@@ -2,6 +2,7 @@ package net.apartium.servers.infernumpvp._1v1;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -87,12 +88,8 @@ public class ArenasManager {
 	}
 
 	public Arena randomArena() {
-		for (Arena a : arenas) {
-			if (!a.isInuse()) {
-				return a;
-			}
-		}
-		return null;
+		Random r = new Random();
+		return arenas.get(r.nextInt(arenas.size()));
 	}
 
 	public void saveArenas() {

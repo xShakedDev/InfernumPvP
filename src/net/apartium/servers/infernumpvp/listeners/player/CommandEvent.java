@@ -15,7 +15,7 @@ public class CommandEvent implements Listener {
 	public void onCommand(PlayerCommandPreprocessEvent e) {
 		if (OvOListener.ingame.containsKey(e.getPlayer().getUniqueId())) {
 			e.setCancelled(true);
-			e.getPlayer().sendMessage(m.OVO + ChatBuilder.build("Cant write messages while ingame!"));
+			e.getPlayer().sendMessage(m.OVO + ChatBuilder.build("Cant write commands while ingame!"));
 		}
 	}
 }

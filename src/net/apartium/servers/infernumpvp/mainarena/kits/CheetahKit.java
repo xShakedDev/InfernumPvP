@@ -12,7 +12,7 @@ import net.apartium.servers.infernumpvp.utils.ItemUtil;
 public class CheetahKit extends Kit {
 
 	public CheetahKit() {
-		super("Cheetah", 125);
+		super("Cheetah", 125, "I am the fastest one in the world!");
 
 	}
 
@@ -29,23 +29,23 @@ public class CheetahKit extends Kit {
 
 	@Override
 	public ItemStack chestplate() {
-		return new ItemStack(Material.LEATHER_CHESTPLATE);
+		return new ItemStack(Material.DIAMOND_CHESTPLATE);
 	}
 
 	@Override
 	public ItemStack leggings() {
-		return new ItemStack(Material.LEATHER_LEGGINGS);
+		return new ItemStack(Material.IRON_LEGGINGS);
 	}
 
 	@Override
 	public ItemStack boots() {
-		return new ItemStack(Material.LEATHER_BOOTS);
+		return new ItemStack(Material.IRON_BOOTS);
 	}
 
 	@Override
 	public void onFill(Player p) {
 		p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 9999999, 1));
-		p.getInventory().addItem(new ItemStack(Material.WOOD_SWORD));
+		p.getInventory().addItem(ItemUtil.easy(Material.STONE_SWORD, "§cCheetah Sword"));
 	}
 
 	@Override

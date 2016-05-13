@@ -1,7 +1,10 @@
 package net.apartium.servers.infernumpvp.listeners.arena;
 
-import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.SkullType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -15,12 +18,18 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType.SlotType;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.potion.PotionEffect;
 
 import net.apartium.servers.infernumpvp.InfernumPvP;
+import net.apartium.servers.infernumpvp.utils.ItemUtil;
 
 @SuppressWarnings("deprecation")
 public class MainEvents implements Listener {
@@ -46,6 +55,26 @@ public class MainEvents implements Listener {
 		}
 	}
 
+	@EventHandler(ignoreCancelled = true)
+	public void onArmorSlot(InventoryClickEvent event) {
+		if (event.getSlotType().equals(SlotType.ARMOR) && event.getInventory().getItem(event.getSlot()) != null)
+			event.setCancelled(true);
+	}
+
+	@EventHandler(priority = EventPriority.HIGH)
+	public void onDrop(PlayerDropItemEvent e) {
+		if (e.getItemDrop().getItemStack().getType().name() == "BOWL"
+				|| e.getItemDrop().getItemStack().getType().name() == "MUSHROOM_SOUP")
+			e.getItemDrop().remove();
+		else
+			e.setCancelled(true);
+	}
+
+	@EventHandler
+	public void onWeatherChange(WeatherChangeEvent e) {
+		e.setCancelled(true);
+	}
+
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onBreak(BlockBreakEvent e) {
 		if (m.breaks.contains(e.getPlayer().getUniqueId())) {
@@ -66,13 +95,28 @@ public class MainEvents implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onRespawn(PlayerRespawnEvent e) {
-		new BukkitRunnable() {
+		Player p = e.getPlayer();
+		e.setRespawnLocation(new Location(m.spawnWorld, -485.500, 123.5, -98.5));
 
-			@Override
-			public void run() {
-				Bukkit.dispatchCommand(e.getPlayer(), "spawn");
-			}
-		}.runTaskLater(m, 1);
+		ItemStack select = ItemUtil.easy(Material.CHEST, ChatColor.GRAY + "Kits");
+		ItemStack shop = ItemUtil.easy(Material.ENDER_CHEST, ChatColor.GRAY + "Kit Shop");
+
+		p.getInventory().clear();
+		for (PotionEffect pe : p.getActivePotionEffects())
+			p.removePotionEffect(pe.getType());
+		p.setHealth(20);
+		p.setFoodLevel(20);
+		p.setGameMode(GameMode.SURVIVAL);
+
+		p.getInventory().setItem(0, select);
+		p.getInventory().setItem(2, shop);
+		ItemStack is = new ItemStack(Material.SKULL_ITEM, 1, (short) SkullType.PLAYER.ordinal());
+		SkullMeta im = (SkullMeta) is.getItemMeta();
+		im.setOwner(p.getName());
+		im.setDisplayName("§c" + p.getName() + " Stats");
+		is.setItemMeta(im);
+		p.getInventory().addItem(ItemUtil.easy(Material.BLAZE_ROD, "§61V1 Stick"));
+		p.getInventory().setItem(8, is);
 	}
 
 	@EventHandler(priority = EventPriority.HIGH)
@@ -114,11 +158,8 @@ public class MainEvents implements Listener {
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onDamage(EntityDamageByEntityEvent ev) {
 		if ((ev.getEntity() instanceof Player)) {
+			ev.setCancelled(false);
 			Player p = (Player) ev.getEntity();
-			if (ev.getEntity().getWorld() == m.spawnWorld) {
-				ev.setCancelled(true);
-				return;
-			}
 			ItemStack[] armor = p.getInventory().getArmorContents();
 			for (ItemStack armo : armor) {
 				if (armo != null) {
@@ -127,18 +168,17 @@ public class MainEvents implements Listener {
 					p.updateInventory();
 				}
 			}
-		}
-		if ((ev.getDamager() instanceof Player)) {
-			Player p = (Player) ev.getDamager();
-			ItemStack handitem = p.getItemInHand();
-			if (handitem.getType() == Material.GOLD_SWORD) {
-				handitem.setDurability((short) 30);
-				p.updateInventory();
-			}
-			if (handitem.getDurability() != 0) {
-				if (handitem.getDurability() != handitem.getType().getMaxDurability()) {
-					handitem.setDurability((short) Short.MIN_VALUE);
+			if ((ev.getDamager() instanceof Player)) {
+				ItemStack handitem = p.getItemInHand();
+				if (handitem.getType() == Material.GOLD_SWORD) {
+					handitem.setDurability((short) 30);
 					p.updateInventory();
+				}
+				if (handitem.getDurability() != 0) {
+					if (handitem.getDurability() != handitem.getType().getMaxDurability()) {
+						handitem.setDurability((short) Short.MIN_VALUE);
+						p.updateInventory();
+					}
 				}
 			}
 		}

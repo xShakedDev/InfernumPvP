@@ -5,10 +5,19 @@ import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.SkullType;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.potion.PotionEffect;
 
 import net.apartium.servers.infernumpvp.mainarena.Kit;
 import net.apartium.servers.infernumpvp.utils.ChatBuilder;
+import net.apartium.servers.infernumpvp.utils.ItemUtil;
 
 public class PlayerData {
 
@@ -28,6 +37,60 @@ public class PlayerData {
 		this.bukkitPlayer = Bukkit.getPlayer(id);
 		this.name = bukkitPlayer.getName();
 		this.uuid = bukkitPlayer.getUniqueId().toString();
+	}
+
+	public int getHighestKS() {
+		if (m.pdc.get("PlayerData." + uuid + ".stats.highks") != null) {
+			if (m.pdc.getInt("PlayerData." + uuid + ".stats.highks") < 0) {
+				setKills(0);
+				return 0;
+			} else {
+				return m.pdc.getInt("PlayerData." + uuid + ".stats.highks");
+			}
+		} else {
+			return 0;
+		}
+	}
+
+	public void setHighKS(int amount) {
+		m.pdc.set("PlayerData." + uuid + ".stats.highks", amount);
+		savePData();
+	}
+
+	public double getKills() {
+		if (m.pdc.get("PlayerData." + uuid + ".stats.kills") != null) {
+			if (m.pdc.getInt("PlayerData." + uuid + ".stats.kills") < 0) {
+				setKills(0.0);
+				return 0.0;
+			} else {
+				return m.pdc.getDouble("PlayerData." + uuid + ".stats.kills");
+			}
+		} else {
+			return 0.0;
+		}
+	}
+
+	public void setKills(double amount) {
+		m.pdc.set("PlayerData." + uuid + ".stats.kills", amount);
+		savePData();
+	}
+
+	public double getDeaths() {
+		if (m.pdc.get("PlayerData." + uuid + ".stats.deaths") != null) {
+			if (m.pdc.getInt("PlayerData." + uuid + ".stats.deaths") < 0.0) {
+				setDeaths(0.0);
+				return 0.0;
+			} else {
+				return m.pdc.getDouble("PlayerData." + uuid + ".stats.deaths");
+			}
+		} else {
+			return 0.0;
+		}
+	}
+
+	public void setDeaths(double d) {
+		m.pdc.set("PlayerData." + uuid + ".stats.deaths", d);
+		savePData();
 	}
 
 	public int getCoins() {
@@ -136,7 +199,7 @@ public class PlayerData {
 	}
 
 	public String getNick() {
-		return "§a"+getPlayer().getDisplayName();
+		return getPlayer().getDisplayName();
 	}
 
 	public void sendMessage(String str) {
@@ -155,7 +218,34 @@ public class PlayerData {
 	}
 
 	public void spawn() {
-		Bukkit.dispatchCommand(getPlayer(), "/spawn");
+		bukkitPlayer.teleport(new Location(m.spawnWorld, -485.500, 123.5, -98.5));
+
+		ItemStack select = ItemUtil.easy(Material.CHEST, ChatColor.GRAY + "Kits");
+		ItemStack shop = ItemUtil.easy(Material.ENDER_CHEST, ChatColor.GRAY + "Kit Shop");
+
+		bukkitPlayer.getInventory().clear();
+		for (PotionEffect pe : bukkitPlayer.getActivePotionEffects())
+			bukkitPlayer.removePotionEffect(pe.getType());
+		bukkitPlayer.setHealth(20);
+		bukkitPlayer.setFoodLevel(20);
+		bukkitPlayer.setGameMode(GameMode.SURVIVAL);
+
+		bukkitPlayer.getInventory().setItem(0, select);
+		bukkitPlayer.getInventory().setItem(2, shop);
+		ItemStack is = new ItemStack(Material.SKULL_ITEM, 1, (short) SkullType.PLAYER.ordinal());
+		SkullMeta im = (SkullMeta) is.getItemMeta();
+		im.setOwner(bukkitPlayer.getName());
+		im.setDisplayName("§c" + bukkitPlayer.getName() + " Stats");
+		is.setItemMeta(im);
+		bukkitPlayer.getInventory().addItem(ItemUtil.easy(Material.BLAZE_ROD, "§61V1 Stick"));
+		bukkitPlayer.getInventory().setItem(8, is);
 	}
-	
+
+	public double getKDR() {
+		if (getDeaths() != 0) {
+			return (getKills() / getDeaths());
+		} else {
+			return getKills();
+		}
+	}
 }

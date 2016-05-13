@@ -7,24 +7,24 @@ import org.bukkit.inventory.ItemStack;
 import net.apartium.servers.infernumpvp.mainarena.Kit;
 import net.apartium.servers.infernumpvp.utils.ItemUtil;
 
-public class FisherManKit extends Kit {
-	public FisherManKit() {
-		super("FisherMan", 175, "Lets go to fish some \"KIDS\"");
+public class StomperKit extends Kit {
+	public StomperKit() {
+		super("Stomper", 300, "I will crush your ~HEAD~ from the air");
 	}
 
 	@Override
 	public ItemStack helmet() {
-		return new ItemStack(Material.IRON_HELMET);
+		return new ItemStack(Material.IRON_BOOTS);
 	}
 
 	@Override
 	public ItemStack chestplate() {
-		return new ItemStack(Material.IRON_CHESTPLATE);
+		return new ItemStack(Material.IRON_BOOTS);
 	}
 
 	@Override
 	public ItemStack leggings() {
-		return new ItemStack(Material.IRON_LEGGINGS);
+		return new ItemStack(Material.IRON_BOOTS);
 	}
 
 	@Override
@@ -34,12 +34,12 @@ public class FisherManKit extends Kit {
 
 	@Override
 	public void onFill(Player p) {
-		p.getInventory().addItem(ItemUtil.easy(Material.STONE_SWORD, "§cFisher's Sword"));
-		p.getInventory().addItem(new ItemStack(Material.FISHING_ROD));
+		p.getInventory().addItem(ItemUtil.easy(Material.STONE_SWORD, "§cStomper's Sword"));
 	}
 
 	@Override
 	public ItemStack icon() {
-		return new ItemStack(Material.FISHING_ROD);
+		return new ItemStack(Material.ANVIL);
 	}
+
 }

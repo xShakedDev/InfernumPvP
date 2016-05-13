@@ -6,37 +6,38 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import net.apartium.servers.infernumpvp.mainarena.Kit;
+import net.apartium.servers.infernumpvp.utils.ItemUtil;
 
 public class MarksmanKit extends Kit {
 
 	public MarksmanKit() {
-		super("Marksman", 0);
+		super("Marksman", 0, "Run away or you will be sniped");
 
 	}
 
 	@Override
 	public ItemStack helmet() {
-		return new ItemStack(Material.LEATHER_HELMET);
+		return new ItemStack(Material.IRON_HELMET);
 	}
 
 	@Override
 	public ItemStack chestplate() {
-		return new ItemStack(Material.LEATHER_CHESTPLATE);
+		return new ItemStack(Material.IRON_CHESTPLATE);
 	}
 
 	@Override
 	public ItemStack leggings() {
-		return new ItemStack(Material.LEATHER_LEGGINGS);
+		return new ItemStack(Material.IRON_LEGGINGS);
 	}
 
 	@Override
 	public ItemStack boots() {
-		return new ItemStack(Material.LEATHER_BOOTS);
+		return new ItemStack(Material.IRON_BOOTS);
 	}
 
 	@Override
 	public void onFill(Player p) {
-		p.getInventory().addItem(new ItemStack(Material.WOOD_SWORD));
+		p.getInventory().addItem(ItemUtil.easy(Material.STONE_SWORD, "§cMarksman's Sword"));
 		ItemStack bow = new ItemStack(Material.BOW);
 		bow.addUnsafeEnchantment(Enchantment.ARROW_INFINITE, 1);
 		p.getInventory().addItem(bow);
